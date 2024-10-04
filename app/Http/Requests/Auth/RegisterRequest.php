@@ -27,6 +27,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string'],
             'password_confirmation' => ['required', 'string', 'same:password'],
+            'ktp' => ['required,file,mimes:jpg,jpeg,png,max:2048']
         ];
 
     }

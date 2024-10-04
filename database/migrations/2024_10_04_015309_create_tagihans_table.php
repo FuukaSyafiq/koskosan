@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rented_room_id')->constrained('rented_rooms')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('rented_room_id');
             $table->integer('amount');
             $table->boolean('is_settled')->default(false);
             $table->date('due_date');
             $table->date('tanggal_notif');
             
+            $table->foreign('rented_room_id')->references('id')->on('rented_rooms')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

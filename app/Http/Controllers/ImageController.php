@@ -10,16 +10,16 @@ use Str;
 
 class ImageController extends Controller
 {
-    use Upload;//add this trait
+    use Upload; //add this trait
 
-    public function store(Request $request, string $html_key, string $folder)
+    public function store(Request $request, string $html_key)
     {
         if ($request->hasFile($html_key)) {
             $file = $request->file($html_key);
-		    $fileName = $file->getFilename() . Str::uuid()->toString() . $file->getClientOriginalExtension();
+            $fileName = $file->getFilename() . Str::uuid()->toString() . $file->getClientOriginalExtension();
 
-            $path = $this->UploadFile($file, $folder, $fileName); //use the method in the trait
-            
+            $path = $this->UploadFile($file, "", $fileName); //use the method in the trait
+
             $fileDB = Image::create([
                 'file_name' => $fileName,
                 'mime_type' => $file->getClientMimeType(),
@@ -28,8 +28,7 @@ class ImageController extends Controller
                 'size' => $file->getSize(),
             ]);
             return $fileDB;
-        }
-        ;
+        };
 
         throw new Exception("Error while uploading files", 1);
     }

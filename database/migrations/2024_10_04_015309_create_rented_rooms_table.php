@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('rented_rooms', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade')->onUpdate('cascade');
-            
-            $table->timestamp('rent_time');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('room_id');
+            $table->date('rent_time');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('room_id')->references('id')->on('rooms')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

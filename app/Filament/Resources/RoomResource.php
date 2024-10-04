@@ -12,6 +12,25 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\FileUpload;
+use Filament\Resources\Components\Tab;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Get;
+use Filament\Forms\Components\Toggle;
 
 class RoomResource extends Resource
 {
@@ -23,7 +42,16 @@ class RoomResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')
+                  ->label('nama ruang'),
+                Toggle::make('available')
+                  ->label('tersedia'),
+                TextInput::make('price')
+                  ->label('Harga'),
+                TextInput::make('description')
+                  ->label('deskripsi'),
+                TextInput::make('facility')
+                  ->label('fasilitas'),
             ]);
     }
 
@@ -31,7 +59,16 @@ class RoomResource extends Resource
     {
         return $table
             ->columns([
-                //
+              TextColumn::make('name')
+                ->label('nama ruang'),
+              BooleanColumn::make('available')
+                ->label('tersedia'),
+              TextColumn::make('price')
+                ->label('Harga'),
+              TextColumn::make('description')
+                ->label('deskripsi'),
+              TextColumn::make('facility')
+                ->label('fasilitas'),
             ])
             ->filters([
                 //

@@ -15,10 +15,10 @@ return new class extends Migration {
             $table->string('file_name');
             $table->string('mime_type')->nullable();
             $table->string('path');
-            $table->unsignedBigInteger('size')->nullable();
+            $table->unsignedInteger('size')->nullable();
+            $table->unsignedInteger('room_id')->nullable();
 
-            $table->foreign()
-            $table->timestamps();
+            $table->foreign('room_id')->references('id')->on('rooms')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('image');
+        Schema::dropIfExists('images');
     }
 };

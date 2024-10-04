@@ -14,7 +14,7 @@ class KosSeeder extends Seeder
     {
         Kos::create([
             "name" => "Kos Umi Qosim",
-            "adress" => "BABADAN RT 02, WONOREJO, KEDAWUNG, SRAGEN",
+            "address" => "BABADAN RT 02, WONOREJO, KEDAWUNG, SRAGEN",
         ]);
     }
 

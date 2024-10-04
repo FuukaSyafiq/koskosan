@@ -60,7 +60,6 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'admin' => \App\Http\Middleware\RoleAdmin::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'warga-admin' => \App\Http\Middleware\WargaAdmin::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,

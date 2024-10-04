@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Room;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
     public function details($id) {
+
+        $datas = Room::getAvailableRooms();
 
         return view('room.room-details', ["id" => $id]);
     }

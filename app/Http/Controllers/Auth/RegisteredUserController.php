@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\ImageController;
 use App\Models\Kecamatan;
 use App\Models\Role;
 use App\Models\User;
@@ -41,18 +42,10 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-
-        $user = DataPendaftar::create(attributes: [
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => Role::getIdByRole('WARGA'),
-            'nomor_telepon' => $request->phone,
-            'password' => Hash::make($request->password),
-        ]);
-
-
-        // event(new Registered($user));
-        // Auth::login($user);
-        return redirect('/')->with('konfirmasi', 1);
+        
+        // $ktp = (new ImageController())->store($request, "ktp_files");
+        print_r($request);
+      
+        return redirect()->to('/');
     }
 }

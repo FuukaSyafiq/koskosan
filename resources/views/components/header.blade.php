@@ -87,22 +87,7 @@
                     @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))
                     @endif
 
-
-                    @if (in_array($user->role_id, \App\Models\Role::getAllRoleExceptWargaAdmin()->toArray()))
-                        <li>
-                            <a href="{{ url('/operator') }}"
-                                class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
-                                aria-current="page">{{\App\Models\Role::getRole($user->role_id)->role}}</a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/kos') }}"
-                                class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
-                                aria-current="page">KAMAR</a>
-                        </li>
-                    @endif
-
-
-                    @if ($user->role_id == \App\Models\Role::getIdByRole('ADMIN'))
+                    @if ($user->role_id == \App\Models\Role::getIdByRole('OWNER'))
 
                         <li>
                             <a href="{{ url('/admin') }}"

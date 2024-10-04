@@ -14,6 +14,7 @@ class Role extends Model
         "role"
     ];
 
+    public $timestamps = false;
     protected $table = "roles";
 
     public static function getIdByRole($role)
@@ -55,8 +56,8 @@ class Role extends Model
         return $this->hasOne(User::class);
     }
 
-    public function AuthorityItem()
-    {
-        return $this->hasMany(AuthorityItem::class);
-    }
+    // public function AuthorityItem()
+    // {
+    //     return $this->hasMany(AuthorityItem::class);
+    // }
 }

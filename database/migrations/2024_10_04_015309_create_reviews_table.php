@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->text('review');
             $table->integer('star');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('room_id');
             
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('room_id')->references('id')->on('rooms')->cascadeOnDelete()->cascadeOnUpdate();
            
             $table->timestamps();
         });

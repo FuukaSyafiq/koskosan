@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('kos', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('adress');
+            $table->string('name')->unique();
+            $table->string('address');
         });
     }
 

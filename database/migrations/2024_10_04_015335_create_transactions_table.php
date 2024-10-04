@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('tagihan_id')->constrained('tagihans')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            
+            $table->unsignedInteger('tagihan_id');
+            $table->unsignedInteger('sender_id');
+            $table->unsignedInteger('receiver_id');
             $table->timestamps();
+
+            $table->foreign('tagihan_id')->references('id')->on('tagihans')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('sender_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('receiver_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

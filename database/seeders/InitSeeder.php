@@ -13,19 +13,29 @@ class InitSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(KosSeeder::class);
+        $this->call(RoomSeeder::class);
+        $this->call(ImageSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(PermissionNameSeeder::class);
-        $this->call(PermissionAdminSeeder::class);
-        $this->call(PermissionOperatorSeeder::class);
+        $this->call(PermissionOwnerSeeder::class);
+        $this->call(PermissionPenyewaSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(ReviewSeeder::class);
     }
 
 
     public static function down()
     {
-        PermissionAdminSeeder::down();
-        PermissionOperatorSeeder::down();
+        ReviewSeeder::down();
+        UserSeeder::down();
+        PermissionOwnerSeeder::down();
+        PermissionPenyewaSeeder::down();
         PermissionNameSeeder::down();
         RoleSeeder::down();
+        ImageSeeder::down();
+        RoomSeeder::down();
+        KosSeeder::down();
     }
 
 }

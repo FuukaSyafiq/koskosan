@@ -31,13 +31,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if ($request->user()->role_id === Role::getIdByRole("ADMIN")) {
-            return redirect('/admin');
-        } else if ($request->user()->role_id === Role::getIdByRole("WARGA")) {
-            return redirect()->intended(RouteServiceProvider::HOME)->with('user', $request->user());
+        if ($request->user()->role_id === Role::getIdByRole("PENYEWA")) {
+            return redirect('/');
         }
 
-        return redirect('/operator');
+        return redirect('/admin');
     }
 
     /**
