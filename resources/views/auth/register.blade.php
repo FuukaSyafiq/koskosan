@@ -1,0 +1,69 @@
+<x-header />
+
+<div class="max-w-4xl mx-auto my-3 bg-white border border-gray-200 rounded-lg shadow-md">
+    <div class="p-6 border-b border-gray-200">
+        <h2 class="text-2xl font-bold text-center">Daftar</h2>
+    </div>
+    <div class="p-6">
+        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
+            @csrf
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                    <input id="name" type="text" name="name" class="form-input block w-full"
+                        placeholder="Contoh: Andi Nugroho" value="Masud" required />
+                </div>
+
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" type="email" name="email" class="form-input block w-full"
+                        placeholder="Contoh: email@gmail.com" value="dummy@email.com" required />
+                </div>
+
+                <div class="space-y-2">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">No WA/telp</label>
+                    <input id="phone" name="phone" type="text" class="form-input block w-full"
+                        placeholder="Input no telpon" value="01234567891011" required />
+                </div>
+
+                <div class="space-y-2">
+                    <label for="role" class="block text-sm font-medium text-gray-700">Daftar Sebagai</label>
+                    <select id="role"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option selected value="PENYEWA">Penyewa</option>
+                        <option value="PEMILIKKOS">Pemilik kos</option>
+                    </select>
+                </div>
+
+
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input id="password" name="password" type="password" class="form-input block w-full" placeholder=""
+                        value="password" required />
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">konfirmasi
+                        password</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password"
+                        class="form-input block w-full" placeholder="" value="password" required />
+                </div>
+
+
+
+            </div>
+
+            <div class="p-6 border-t border-gray-200">
+                <button type="submit"
+                    class="w-full py-2 px-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm">
+                    Sign up
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+</script>
