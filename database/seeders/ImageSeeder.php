@@ -17,6 +17,13 @@ class ImageSeeder extends Seeder
             "file_name" => "ktp_dummy.jpeg",
             "mime_type" => "image/jpeg",
             "size" => 9591,
+            "room_id" => null,
+        ]);
+        Image::create([
+            "path" =>"https://image.archify.com/blog/l/v2wkpyvs.jpg",
+            "file_name" => "A1.jpg",
+            "mime_type" => "image/jpeg",
+            "size" => 9591,
             "room_id" => 1,
         ]);
     }
