@@ -9,8 +9,8 @@ class IndexController extends Controller
 {
     public function gets()
     {
-        $datas = Room::getAvailableRooms();
+        // $datas = Room::getAvailableRooms();
 
-        return view('index', ['user' => auth()->user(), 'datas' => $datas]);
+        return view('index', ['user' => auth()->user()]);
     }
 }

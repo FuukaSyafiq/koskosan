@@ -33,23 +33,6 @@ class PermissionPenyewaSeeder extends Seeder
 				"role_id" => Role::getIdByRole("PENYEWA"),
 				"permission_name_id" => PermissionName::getIdByPermissionNameAndAction("Room", "DELETE")
 			],
-			[
-				"role_id" => Role::getIdByRole("PENYEWA"),
-				"permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "CREATE")
-			],
-			[
-				"role_id" => Role::getIdByRole("PENYEWA"),
-				"permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "UPDATE")
-			],
-			[
-				"role_id" => Role::getIdByRole("PENYEWA"),
-				"permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "READ")
-			],
-			[
-				"role_id" => Role::getIdByRole("PENYEWA"),
-				"permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "DELETE")
-			],
-
 		];
 
 		foreach ($datas as $data) {

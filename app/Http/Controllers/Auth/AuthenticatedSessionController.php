@@ -32,10 +32,10 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if ($request->user()->role_id === Role::getIdByRole("PENYEWA")) {
-            return redirect('/');
+            return redirect('/penyewa');
         }
 
-        return redirect('/admin');
+        return redirect('/owner');
     }
 
     /**

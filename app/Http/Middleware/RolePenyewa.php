@@ -4,11 +4,11 @@ namespace App\Http\Middleware;
 
 use App\Models\Role;
 use Closure;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class WargaAdmin
+class RolePenyewa
 {
     /**
      * Handle an incoming request.
@@ -17,8 +17,7 @@ class WargaAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        if (Auth::check() && Auth::user()->role_id === Role::getIdByRole('WARGA') || Auth::user()->role_id === Role::getIdByRole('ADMIN')) {
+        if (Auth::check() && auth()->user()->role_id === Role::getIdByRole('PENYEWA')) {
             return $next($request);
         }
         return back();

@@ -26,9 +26,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'nomor_induk_kependudukan',
         'role_id',
-        'data_pendaftar_id',
         "password",
     ];
 
@@ -51,11 +49,6 @@ class User extends Authenticatable
     public static function getIdByName($name)
     {
         return self::where('name', $name)->first('id')->id;
-    }
-
-    public function dataPendaftar()
-    {
-        return $this->hasOne(DataPendaftar::class, 'data_pendaftar_id');
     }
 
 }

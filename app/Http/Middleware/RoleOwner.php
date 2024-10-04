@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Providers\RouteServiceProvider;
 use Symfony\Component\HttpFoundation\Response;
 
-class RoleAdmin
+class RoleOwner
 {
     /**
      * Handle an incoming request.
@@ -18,7 +18,7 @@ class RoleAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->role_id === Role::getIdByRole('ADMIN')) {
+        if (Auth::check() && Auth::user()->role_id === Role::getIdByRole('OWNER')) {
             return $next($request);
         }
 

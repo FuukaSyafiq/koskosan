@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 use App\Models\Kos;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,6 +16,7 @@ class KosSeeder extends Seeder
         Kos::create([
             "name" => "Kos Umi Qosim",
             "address" => "BABADAN RT 02, WONOREJO, KEDAWUNG, SRAGEN",
+            "user_id" => User::getIdByName("Umi Qosim")
         ]);
     }
 

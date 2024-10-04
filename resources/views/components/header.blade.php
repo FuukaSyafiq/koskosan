@@ -46,7 +46,7 @@
             <span class="self-center text-2xl text-lime-600 font-semibold whitespace-nowrap">KosLoka</span>
         </a>
 
-        <form class="w-3/5 mx-auto" action="/kos">
+        <form class="w-2/5 mx-auto" action="/kos">
             <label for="default-search"
                 class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
             <div class="relative w-full">
@@ -61,7 +61,8 @@
                     class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Cari daerah kosmu" required />
                 <button type="submit"
-                    class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick="">Search</button>
+                    class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    onclick="">Search</button>
             </div>
         </form>
 
@@ -69,7 +70,8 @@
             class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm  rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             aria-controls="navbar-default" aria-expanded="false">
             <span class="sr-only">Open main menu</span>
-            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 17 14">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M1 1h15M1 7h15M1 13h15" />
             </svg>
@@ -78,17 +80,10 @@
             <ul
                 class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 @if ($user)
-                    <li>
-                        <a href="{{ url('/') }}"
-                            class="block mt-2 px-1 font-bold bg-slate-700 rounded md:bg-transparent  md:p-00"
-                            aria-current="page">Home</a>
-                    </li>
-
                     @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))
                     @endif
 
                     @if ($user->role_id == \App\Models\Role::getIdByRole('OWNER'))
-
                         <li>
                             <a href="{{ url('/admin') }}"
                                 class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
@@ -114,7 +109,8 @@
                         <div class="bg-amber-100 z-50 hidden my-4 text-base list-none    divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
                             id="user-dropdown">
                             <div class="px-4 py-3">
-                                <span class="block text-md text-gray-900 dark:text-white">{{ Auth::user()->name }}</span>
+                                <span
+                                    class="block text-md text-gray-900 dark:text-white">{{ Auth::user()->name }}</span>
                                 <span
                                     class="block text-md  text-gray-500 truncate dark:text-gray-400">{{ Auth::user()->email }}</span>
                             </div>
@@ -134,6 +130,15 @@
                     </div>
                     <!-- user profile end -->
                 @elseif (!$user)
+                    <li>
+                        <a href="{{url("/denah")}}">
+                            <button id="dropdownDefaultButton"
+                                class="text-white bg-lime-400 hover:bg-lime-500  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                type="button">Denah
+                            </button>
+                        </a>
+
+                    </li>
                     <li>
 
                         <a href="{{ route('login') }}">

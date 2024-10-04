@@ -14,7 +14,6 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -35,12 +34,10 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
-            // \App\Http\Middleware\RoleOperator::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
         'api' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
@@ -59,8 +56,8 @@ class Kernel extends HttpKernel
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'admin' => \App\Http\Middleware\RoleAdmin::class,
-        'warga-admin' => \App\Http\Middleware\WargaAdmin::class,
+        'penyewa' => \App\Http\Middleware\RolePenyewa::class,
+        'owner' => \App\Http\Middleware\RoleOwner::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
@@ -68,7 +65,6 @@ class Kernel extends HttpKernel
         'terverifikasi' => \App\Http\Middleware\Terverifikasi::class,
         'warga' => \App\Http\Middleware\RoleWarga::class,
         'role' => \App\Http\Middleware\CheckUserRole::class,
-        'role.operator' => \App\Http\Middleware\RoleOperator::class,
         'optimize.images' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
     ];
 }

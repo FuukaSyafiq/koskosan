@@ -25,7 +25,6 @@ class OperatorPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->sidebarCollapsibleOnDesktop(true)
             ->id('operator')
             ->path('operator')
@@ -71,7 +70,7 @@ class OperatorPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                RoleOperator::class,
+                // RoleOperator::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

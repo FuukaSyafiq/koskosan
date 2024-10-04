@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Filament\Resources\UserResource\Pages;
-
+use App\Models\Role;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -22,7 +22,7 @@ class ListUsers extends ListRecords
     {
         return [
             '' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('role_id', 1))
+                ->modifyQueryUsing(fn($query) => $query->where('role_id', Role::getIdByRole("PENYEWA")))
         ];
     }
 
