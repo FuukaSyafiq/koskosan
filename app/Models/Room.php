@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class Room extends Model
 {
@@ -39,7 +40,7 @@ class Room extends Model
     public static function getRoomById($id)
     {
 
-        return DB::table('rooms')->select(
+        return FacadesDB::table('rooms')->select(
             'rooms.name as room_name',
             'rooms.price',
             'rooms.id',
@@ -58,7 +59,7 @@ class Room extends Model
 
     public static function getIdByRoomName($roomName)
     {
-        return DB::table('rooms')->select(
+        return FacadesDB::table('rooms')->select(
             'rooms.id',
             'rooms.name as room_name',
             'rooms.price',
@@ -78,7 +79,7 @@ class Room extends Model
     public static function getAvailableRooms()
     {
 
-        return DB::table('rooms')->select(
+        return FacadesDB::table('rooms')->select(
             'rooms.name as room_name',
             'rooms.price',
             'rooms.id',

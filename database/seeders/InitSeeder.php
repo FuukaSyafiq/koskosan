@@ -35,7 +35,7 @@ class InitSeeder extends Seeder
         RoleSeeder::down();
         ImageSeeder::down();
         RoomSeeder::down();
-        KosSeeder::down();
+        // KosSeeder::down();
     }
 
 }

@@ -7,6 +7,7 @@ use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash as FacadesHash;
 
 class UserSeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $password = Hash::make('password');
+        $password = FacadesHash::make('password');
         $datas = [
             //admin 
             ["name" => "Umi Qosim", "email" => "admin@gmail.com", "password" => $password, "balance" => 500000, "role_id" => Role::getIdByRole("OWNER"), "address" => "BABADAN RT 02, WONOREJO, KEDAWUNG, SRAGEN", "contact" => "000000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],

@@ -37,7 +37,7 @@ class RoomResource extends Resource
 {
   protected static ?string $model = Room::class;
 
-  protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+  protected static ?string $navigationIcon = 'heroicon-c-home-modern';
 
   private static function checkPermission(string $action): bool
   {
@@ -103,7 +103,8 @@ class RoomResource extends Resource
               ->suffix('/Bulan'),
             TextArea::make('description')
               ->label('deskripsi')
-              ->limit(50),
+              ->autosize()
+              ->maxLength(255),
             TextInput::make('facility')
               ->label('fasilitas'),
           ])
@@ -116,9 +117,9 @@ class RoomResource extends Resource
     $kosId = 2;
 
     return $table
-      ->modifyQueryUsing(function ($query) use ($kosId) {
-        return $query->where('available', true)->where('kos_id', $kosId);
-      })
+      // ->modifyQueryUsing(function ($query) use ($kosId) {
+      //   return $query->where('available', true)->where('kos_id', $kosId);
+      // })
       ->columns([
         TextColumn::make('name')
           ->label('nama ruang'),
@@ -127,11 +128,10 @@ class RoomResource extends Resource
         TextColumn::make('price')
           ->label('Harga'),
         TextColumn::make('description')
-          ->label('deskripsi'),
+          ->label('deskripsi')
+          ->limit(50),
         TextColumn::make('facility')
           ->label('fasilitas'),
-        TextColumn::make('kos.name')
-          ->label('kos'),
       ])
       ->filters([
         //

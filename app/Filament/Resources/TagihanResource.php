@@ -22,7 +22,7 @@ class TagihanResource extends Resource
 {
     protected static ?string $model = Tagihan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-c-banknotes';
 
     public static function form(Form $form): Form
     {
@@ -30,16 +30,15 @@ class TagihanResource extends Resource
             ->schema([
                 Section::make()
                   ->schema([
-                      Select::make('rented_room_id')
-                        ->label('Kamar')
-                        ->required()
-                        ->relationship(
-                            name:'rentedRoom.room', 
-                            titleAttribute:'name',
-                            modifyQueryUsing: fn (Builder $query) => $query->whereHas('room', function ($query) {
-                                $query->where('available', false);
-                            })
-                        ),
+                    Select::make('rented_room_id')
+                    ->label('Kamar')
+                    ->relationship(
+                        name: 'rentedRoom', 
+                        titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
+                        modifyQueryUsing: fn (Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
+                                                                     ->where('rooms.available', false)
+                    )
+                    ->required(),
                       TextInput::make('amount')
                         ->label('Jumlah Tagihan')
                         ->required()
@@ -55,8 +54,7 @@ class TagihanResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('rented_room.room.name')
-                    ->label('Kamar'),
+                TextColumn::make('rentedRoom.room.name')->label('Room Name'),
                 TextColumn::make('amount')
                     ->label('Jumlah tagihan'),
                 TextColumn::make('due_date')

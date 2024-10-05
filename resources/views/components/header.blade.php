@@ -81,11 +81,16 @@
                 class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 @if ($user)
                     @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))
+                    <li>
+                        <a href="{{ url('/penyewa') }}"
+                            class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
+                            aria-current="page">Kamar Anda</a>
+                    </li>
                     @endif
 
                     @if ($user->role_id == \App\Models\Role::getIdByRole('OWNER'))
                         <li>
-                            <a href="{{ url('/admin') }}"
+                            <a href="{{ url('/owner') }}"
                                 class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
                                 aria-current="page">Kelola KOS</a>
                         </li>

@@ -16,4 +16,9 @@ class CreateUser extends CreateRecord
         $data['role_id'] = Role::getIdByRole('PENYEWA');
         return $data;
     }
+
+    protected function getRedirectUrl(): string
+{
+    return $this->getResource()::getUrl('index');
+}
 }

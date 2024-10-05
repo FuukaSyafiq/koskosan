@@ -7,6 +7,8 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Permission;
 use App\Models\User;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -17,12 +19,13 @@ use Filament\Resources\Components\Tab;
 use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-user';
     private static function checkPermission(string $action): bool
     {
         $permission = Permission::getPermissionByUserAndPermissionAndAction('User', $action);
@@ -71,6 +74,12 @@ class UserResource extends Resource
             return false;
         }
         return self::checkPermission('DELETE');
+    }
+
+    public static function getTitle(): string
+    {
+        $user = request()->route('record'); // Get the current record
+        return "{$user->name} Data"; // Customize the title
     }
 
     public static function form(Form $form): Form
@@ -128,6 +137,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -149,6 +159,29 @@ class UserResource extends Resource
             'index' => Pages\ListUsers::route('/'),
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
+            'view' => Pages\ViewUser::route('/{record}')
         ];
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                // Section::make('')
+                //     ->schema([
+                        TextEntry::make('name')
+                            ->label('nama'),
+                        TextEntry::make('email')
+                            ->label('email'),
+                        TextEntry::make('contact')
+                            ->label('contact'),
+                        TextEntry::make('address')
+                            ->label('Alamat'),
+                        TextEntry::make('balance')
+                            ->label('Saldo'),
+                        ImageEntry::make('ktp_id')
+                            ->label('KTP'),
+                    // ])
+            ]);
     }
 }

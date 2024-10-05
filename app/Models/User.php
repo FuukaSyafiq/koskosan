@@ -55,4 +55,13 @@ class User extends Authenticatable
         return self::where('name', $name)->first('id')->id;
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function rentedRooms()
+    {
+        return $this->hasMany(RentedRoom::class);
+    }
 }
