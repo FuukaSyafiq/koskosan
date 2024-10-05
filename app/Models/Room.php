@@ -13,18 +13,18 @@ class Room extends Model
 
     protected $table = "rooms";
 
-    public static function getIdByNameAndKosName($roomName, $kosName)
-    {
-        $idKos = Kos::getKosIdByName($kosName);
-        return self::where('name', $roomName)->where('kos_id', $idKos)->first()->id;
-    }
+    // public static function getIdByNameAndKosName($roomName, $kosName)
+    // {
+    //     $idKos = Kos::getKosIdByName($kosName);
+    //     return self::where('name', $roomName)->where('kos_id', $idKos)->first()->id;
+    // }
 
-    protected $fillable = ['name', 'available', 'price', 'description', 'facility', 'kos_id'];
+    protected $fillable = ['name', 'available', 'price', 'description', 'facility', 'address'];
 
-    public function kos()
-    {
-        return $this->belongsTo(Kos::class);
-    }
+    // public function kos()
+    // {
+    //     return $this->belongsTo(Kos::class);
+    // }
 
     public function reviews()
     {
@@ -55,6 +55,25 @@ class Room extends Model
             ->where('rooms.available', true)->where('rooms.id', $id)
             ->get();
     }
+
+    public static function getIdByRoomName($roomName)
+    {
+        return DB::table('rooms')->select(
+            'rooms.id',
+            'rooms.name as room_name',
+            'rooms.price',
+            'rooms.description',
+            'rooms.facility',
+            'rooms.address',
+            'images.path',
+            'images.file_name'
+        )
+            ->join('images', 'images.room_id', '=', 'rooms.id')
+            ->where('rooms.available', true)
+            ->where('rooms.name', $roomName)
+            ->get();
+    }
+
 
     public static function getAvailableRooms()
     {

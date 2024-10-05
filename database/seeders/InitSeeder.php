@@ -13,7 +13,7 @@ class InitSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(KosSeeder::class);
+        // $this->call(KosSeeder::class);
         $this->call(RoomSeeder::class);
         $this->call(ImageSeeder::class);
         $this->call(RoleSeeder::class);

@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('contact');
             $table->unsignedBigInteger('balance')->default(0);
             $table->string('address');
-            $table->unsignedInteger('ktp_id');
+            $table->unsignedInteger('ktp_id')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
 

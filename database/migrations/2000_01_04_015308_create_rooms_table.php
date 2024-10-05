@@ -19,9 +19,9 @@ return new class extends Migration
             $table->integer('price')->default(false);
             $table->string('description');
             $table->string('facility');
-            $table->unsignedInteger('kos_id');
+            $table->string('address');
 
-            $table->foreign('kos_id')->references('id')->on('kos')->cascadeOnDelete()->cascadeOnUpdate();
+            // $table->foreign('kos_id')->references('id')->on('kos')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

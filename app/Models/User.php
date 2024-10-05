@@ -28,6 +28,10 @@ class User extends Authenticatable
         'email',
         'role_id',
         "password",
+        "contact",
+        "balance",
+        "address",
+        "ktp_id"
     ];
 
     /**
