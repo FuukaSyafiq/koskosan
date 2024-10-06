@@ -16,6 +16,7 @@ class Tagihan extends Model
         return $this->belongsTo(RentedRoom::class);
     }
 
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class);

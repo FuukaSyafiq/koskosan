@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('path');
             $table->unsignedInteger('size')->nullable();
             $table->unsignedInteger('room_id')->nullable();
+            $table->boolean("is_vr")->nullable()->default(false);
 
             $table->foreign('room_id')->references('id')->on('rooms')->cascadeOnDelete()->cascadeOnUpdate();
         });

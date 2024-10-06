@@ -5,10 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TagihanResource\Pages;
 use App\Filament\Resources\TagihanResource\RelationManagers;
 use App\Models\Tagihan;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -29,25 +31,25 @@ class TagihanResource extends Resource
         return $form
             ->schema([
                 Section::make()
-                  ->schema([
-                    Select::make('rented_room_id')
-                    ->label('Kamar')
-                    ->relationship(
-                        name: 'rentedRoom', 
-                        titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
-                        modifyQueryUsing: fn (Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
-                                                                     ->where('rooms.available', false)
-                    )
-                    ->required(),
-                      TextInput::make('amount')
-                        ->label('Jumlah Tagihan')
-                        ->required()
-                        ->prefix('Rp.'),
-                      DatePicker::make('due_date')
-                        ->label('Tanggal jatuh tempo')
-                        ->required()
-                      ])->columns(2)
-                    ]);
+                    ->schema([
+                        Select::make('rented_room_id')
+                            ->label('Kamar')
+                            ->relationship(
+                                name: 'rentedRoom',
+                                titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
+                                modifyQueryUsing: fn(Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
+                                    ->where('rooms.available', false)
+                            )
+                            ->required(),
+                        TextInput::make('amount')
+                            ->label('Jumlah Tagihan')
+                            ->required()
+                            ->prefix('Rp.'),
+                        DatePicker::make('due_date')
+                            ->label('Tanggal jatuh tempo')
+                            ->required()
+                    ])->columns(2)
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -55,11 +57,15 @@ class TagihanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('rentedRoom.room.name')->label('Room Name'),
+                TextColumn::make('rentedRoom.user.name')->label('Penyewa'),
                 TextColumn::make('amount')
-                    ->label('Jumlah tagihan'),
+                    ->label('Jumlah tagihan')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')), // Memformat sebagai mata uang
+                BooleanColumn::make('is_settled')
+                    ->label('Sudah dibayar'),
                 TextColumn::make('due_date')
-                    ->label('Tanggal'),
-
+                    ->label('Tanggal dibayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                TextColumn::make('tanggal_notif')
+                    ->label('Tanggal pemberitahuan')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y'))
             ])
             ->filters([
                 //

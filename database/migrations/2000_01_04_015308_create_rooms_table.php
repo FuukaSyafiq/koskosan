@@ -16,12 +16,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('available')->default(false);
-            $table->integer('price')->default(false);
+            $table->unsignedInteger('price')->default(0);
             $table->string('description');
             $table->string('facility');
             $table->string('address');
 
-            // $table->foreign('kos_id')->references('id')->on('kos')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

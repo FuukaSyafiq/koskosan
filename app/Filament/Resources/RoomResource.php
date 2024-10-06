@@ -107,19 +107,29 @@ class RoomResource extends Resource
               ->maxLength(255),
             TextInput::make('facility')
               ->label('fasilitas'),
+            TextInput::make('address')
+              ->label('address'),
           ])
-          ->columns(2)
+          ->columns(2),
+        Section::make('Foto ')
+          ->schema([
+            FileUpload::make('images')
+              ->multiple()->directory("Image") // Enable multiple file uploads
+              ->image() // Specify that the upload is for images
+              ->required(), // Optional: Make the field required
+          ]),
+        Section::make('VR Upload')
+          ->schema([
+            FileUpload::make('vr_files')->directory("VR")
+              ->acceptedFileTypes(['.vr', '.gltf', '.glb', '.fbx']) // Tentukan format file yang diterima
+          ]),
       ]);
   }
 
   public static function table(Table $table): Table
   {
-    $kosId = 2;
 
     return $table
-      // ->modifyQueryUsing(function ($query) use ($kosId) {
-      //   return $query->where('available', true)->where('kos_id', $kosId);
-      // })
       ->columns([
         TextColumn::make('name')
           ->label('nama ruang'),

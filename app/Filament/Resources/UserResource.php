@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Image;
 use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\ImageEntry;
@@ -107,7 +109,7 @@ class UserResource extends Resource
                 Section::make('lampiran')
                     ->schema([
                         FileUpload::make('ktp_id')
-                        // ->required()    
+                        ->required()->directory("KTP")
                     ]),
             ]);
     }
@@ -115,9 +117,9 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            // ->modifyQueryUsing(function ($query) {
-            //     return $query->where('');
-            // })
+            ->modifyQueryUsing(function ($query) {
+                return $query->where('role_id', Role::getIdByRole("PENYEWA"));
+            })
             ->columns([
                 TextColumn::make('name')
                     ->label('nama penyewa'),
@@ -130,7 +132,9 @@ class UserResource extends Resource
                 TextColumn::make('contact')
                     ->label('Kontak'),
                 ImageColumn::make('ktp_id')
-                    ->label('KTP')
+                    ->label('KTP')->getStateUsing(callback: function ($record) {
+                        return Image::where('id', $record->ktp_id)->first()->path ?? null;
+                    })
             ])
             ->filters([
                 //

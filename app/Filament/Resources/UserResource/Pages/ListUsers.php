@@ -18,14 +18,6 @@ class ListUsers extends ListRecords
         ];
     }
 
-    public function getTabs(): array
-    {
-        return [
-            '' => Tab::make()
-                ->modifyQueryUsing(fn($query) => $query->where('role_id', Role::getIdByRole("PENYEWA")))
-        ];
-    }
-
     // protected function getActiveTab(): ?string
     // {
     //     return 'warga'; // Default tab to be selected

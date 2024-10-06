@@ -5,6 +5,8 @@ namespace App\Filament\Resources\RentedRoomResource\Pages;
 use App\Filament\Resources\RentedRoomResource;
 use Filament\Actions;
 use App\Models\Room;
+use App\Models\Tagihan;
+use Carbon\Carbon;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,21 +28,20 @@ class EditRentedRoom extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        // Get the current rented room
-        $currentRoomId = $record->room_id;
-    
-        // Check if the room_id has changed
-        if ($currentRoomId !== $data['room_id']) {
-            // Set the old room as available
-            Room::where('id', $currentRoomId)
-                ->update(['available' => true]);
-    
-            // Set the new room as not available
-            Room::where('id', $data['room_id'])
-                ->update(['available' => false]);
+
+        $lamaSewa = $data['rent_time'];
+
+        if (isset($data['rent_time'])) {
+            Tagihan::where('rented_room_id', $record->id)->where('due_date', Carbon::parse($record->rent_time))->update([
+                "due_date" => Carbon::parse($lamaSewa),
+            ]);
+
+            Tagihan::where('rented_room_id', $record->id)->where('due_date', Carbon::parse($record->rent_time)->addDays(25))->update([
+                "due_date" => Carbon::parse($lamaSewa),
+            ]);
+
+            $record->rent_time = $lamaSewa;
         }
-    
-        // Call parent method to handle the actual update
-        return parent::handleRecordUpdate($record, $data);
-    }    
+        return $record;
+    }
 }
