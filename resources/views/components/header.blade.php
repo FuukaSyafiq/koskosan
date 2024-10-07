@@ -94,11 +94,6 @@
                                 class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
                                 aria-current="page">Kelola KOS</a>
                         </li>
-                        <li>
-                            <a href="{{ url('/dashboard/permissionManager/pmrole') }}"
-                                class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
-                                aria-current="page">Permission manager</a>
-                        </li>
                     @endif
 
                     <!-- user profile start -->

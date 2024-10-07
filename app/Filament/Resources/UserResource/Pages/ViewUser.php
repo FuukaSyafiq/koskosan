@@ -9,7 +9,7 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewUser extends ViewRecord
 {
     protected static string $resource = UserResource::class;
-
+    
     public function getTitle(): string
     {
         $user = $this->record; // Access the current record

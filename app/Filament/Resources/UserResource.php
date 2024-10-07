@@ -28,19 +28,54 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-user';
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getNavigationLabel(): string
+    {
+        if (auth()->user()->role->id === Role::getIdByRole('PENYEWA')) {
+            return 'Profile'; // Change label for PENYEWA users
+        }
+        return 'users';
+    }
+
+
     private static function checkPermission(string $action): bool
     {
         $permission = Permission::getPermissionByUserAndPermissionAndAction('User', $action);
         return isset($permission) && $permission->action;
     }
 
+    public static function canView(Model $record): bool
+    {
+
+        $canSeeProfile = self::checkPermission('VIEWPAGE');
+
+        if ($canSeeProfile) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function canAccess(): bool
+    {
+        $canView = self::checkPermission('ACCESS');
+
+        if ($canView) {
+            return true;
+        }
+        return true;
+    }
+
     // Check if the user can view any data
     public static function canViewAny(): bool
     {
         $canView = self::checkPermission('READ');
+
         if (!$canView) {
             return false;
         }
+
         return true;
     }
 
@@ -109,7 +144,14 @@ class UserResource extends Resource
                 Section::make('lampiran')
                     ->schema([
                         FileUpload::make('ktp_id')
-                        ->required()->directory("KTP")
+                            ->label('KTP')
+                            ->required()->directory("KTP")
+                            ->default(function ($record) {
+                                // Check if the KTP ID exists and retrieve the path
+                                $image = Image::where('id', $record->ktp_id)->first();
+                                // Debugging untuk melihat nilai yang didapat
+                                return url($image->path) ?? null;
+                            })
                     ]),
             ]);
     }
@@ -126,14 +168,17 @@ class UserResource extends Resource
                 TextColumn::make('email')
                     ->label('email'),
                 TextColumn::make('balance')
-                    ->label('saldo'),
+                    ->label('saldo')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')),
                 TextColumn::make('address')
                     ->label('Alamat'),
                 TextColumn::make('contact')
                     ->label('Kontak'),
                 ImageColumn::make('ktp_id')
                     ->label('KTP')->getStateUsing(callback: function ($record) {
-                        return Image::where('id', $record->ktp_id)->first()->path ?? null;
+                        // dd($record->id);
+                        $image = Image::where('id', $record->ktp_id)->first();
+                        // Debugging untuk melihat nilai yang didapat
+                        return url($image->path) ?? null;
                     })
             ])
             ->filters([
@@ -173,19 +218,23 @@ class UserResource extends Resource
             ->schema([
                 // Section::make('')
                 //     ->schema([
-                        TextEntry::make('name')
-                            ->label('nama'),
-                        TextEntry::make('email')
-                            ->label('email'),
-                        TextEntry::make('contact')
-                            ->label('contact'),
-                        TextEntry::make('address')
-                            ->label('Alamat'),
-                        TextEntry::make('balance')
-                            ->label('Saldo'),
-                        ImageEntry::make('ktp_id')
-                            ->label('KTP'),
-                    // ])
+                TextEntry::make('name')
+                    ->label('nama'),
+                TextEntry::make('email')
+                    ->label('email'),
+                TextEntry::make('contact')
+                    ->label('contact'),
+                TextEntry::make('address')
+                    ->label('Alamat'),
+                TextEntry::make('balance')
+                    ->label('Saldo'),
+                ImageEntry::make('ktp_id')
+                    ->label('KTP')->getStateUsing(callback: function ($record) {
+                        $image = Image::where('id', $record->ktp_id)->first();
+                        // Debugging untuk melihat nilai yang didapat
+                        return url($image->path) ?? null;
+                    }),
+                // ])
             ]);
     }
 }

@@ -19,10 +19,19 @@ class PermissionNameSeeder extends Seeder
 			["name" => "Room", "action" => "READ"],
 			["name" => "Room", "action" => "DELETE"],
 			["name" => "Room", "action" => "UPDATE"],
+			["name" => "Room", "action" => "VIEWPAGE"],
 			["name" => "User", "action" => "CREATE"],
 			["name" => "User", "action" => "READ"],
 			["name" => "User", "action" => "DELETE"],
 			["name" => "User", "action" => "UPDATE"],
+			["name" => "User", "action" => "VIEWPAGE"],
+			["name" => "User", "action" => "ACCESS"],
+			["name" => "Rented Room", "action" => "UPDATE"],
+			["name" => "Rented Room", "action" => "READ"],
+			["name" => "Rented Room", "action" => "CREATE"],
+			["name" => "Rented Room", "action" => "DELETE"],
+			["name" => "Rented Room", "action" => "VIEWPAGE"],
+			["name" => "Rented Room", "action" => "ACCESS"],
 		];
 
 

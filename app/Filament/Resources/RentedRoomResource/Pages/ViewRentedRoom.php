@@ -12,7 +12,8 @@ class ViewRentedRoom extends ViewRecord
 
     public function getTitle(): string
     {
-        $room = $this->record; // Access the current record
-        return "{$room->room->name}"; // Customize the title
+        // $room = $this->record; // Access the current record
+        // return "{$room->room->name}"; // Customize the title
+        return "Room Detail";
     }
 }

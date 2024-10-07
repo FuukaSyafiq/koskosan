@@ -20,6 +20,6 @@ class RolePenyewa
         if (Auth::check() && auth()->user()->role_id === Role::getIdByRole('PENYEWA')) {
             return $next($request);
         }
-        return back();
+        return redirect()->to('/login');
     }
 }

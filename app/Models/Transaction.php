@@ -9,7 +9,7 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['tagihan_id', 'sender_id', 'receiver_id'];
+    protected $fillable = ['amount', 'sender_id', 'receiver_id'];
 
     public function tagihan()
     {

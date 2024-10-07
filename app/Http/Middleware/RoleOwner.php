@@ -22,6 +22,6 @@ class RoleOwner
             return $next($request);
         }
 
-        return redirect('/login');
+        return redirect()->to('/login');
     }
 }

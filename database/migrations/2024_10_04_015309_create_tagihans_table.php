@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('rented_room_id');
-            $table->integer('amount');
+            $table->unsignedInteger('amount');
             $table->boolean('is_settled')->default(false);
             $table->date('due_date');
             $table->date('tanggal_notif')->nullable();

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Models\Image;
 use App\Models\User;
+use App\Models\Role;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use \Illuminate\Database\Eloquent\Model;
@@ -32,10 +33,10 @@ class EditUser extends EditRecord
         return $fileDB;
     }
 
-    public function handleRecordUpdate($record, array $data): Model
+    public function handleRecordUpdate(Model $record, array $data): Model
     {
         try {
-            
+
             if (isset($data['ktp_id'])) {
                 DB::beginTransaction();
                 $ktp = $this->store($data['ktp_id']);
@@ -44,6 +45,7 @@ class EditUser extends EditRecord
                 DB::commit();
             }
 
+            $record->update($data);
             return $record;
         } catch (\Exception $e) {
             // Rollback the transaction on error
@@ -60,5 +62,19 @@ class EditUser extends EditRecord
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    public function mount($record): void
+    {
+        $userId = auth()->user()->id;
+        $userRole = auth()->user()->role_id;
+
+        if ($userRole === Role::getIdbyRole('PENYEWA')) {
+
+            // Redirect dynamically to the appropriate URL
+            redirect("/penyewa/users/{$userId}");
+            // redirect("/{$roleName}/payments/create");
+        }
+        parent::mount($record);
     }
 }

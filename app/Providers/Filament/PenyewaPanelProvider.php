@@ -61,6 +61,7 @@ class PenyewaPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 RolePenyewa::class,
             ])
+            ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
             ]);

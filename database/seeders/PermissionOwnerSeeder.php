@@ -39,6 +39,10 @@ class PermissionOwnerSeeder extends Seeder
             ],
             [
                 "role_id" => Role::getIdByRole("OWNER"),
+                "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "VIEWPAGE")
+            ],
+            [
+                "role_id" => Role::getIdByRole("OWNER"),
                 "permission_name_id" => PermissionName::getIdByPermissionNameAndAction("User", "UPDATE")
             ],
             [

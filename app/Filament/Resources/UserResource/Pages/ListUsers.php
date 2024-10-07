@@ -18,8 +18,16 @@ class ListUsers extends ListRecords
         ];
     }
 
-    // protected function getActiveTab(): ?string
-    // {
-    //     return 'warga'; // Default tab to be selected
-    // }
+    public function mount(): void
+    {
+        $userId = auth()->user()->id;
+        $userRole = auth()->user()->role_id;
+
+        if($userRole === Role::getIdbyRole('PENYEWA')) {
+
+            // Redirect dynamically to the appropriate URL
+            redirect("/penyewa/users/{$userId}");
+            // redirect("/{$roleName}/payments/create");
+        }
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\RoomResource\Pages;
 use App\Filament\Resources\RoomResource\RelationManagers;
 use App\Models\Permission;
+use App\Models\Role;
 use App\Models\Room;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -39,55 +40,77 @@ class RoomResource extends Resource
 
   protected static ?string $navigationIcon = 'heroicon-c-home-modern';
 
-  private static function checkPermission(string $action): bool
-  {
-    $permission = Permission::getPermissionByUserAndPermissionAndAction('Room', $action);
-    return isset($permission) && $permission->action;
-  }
+  protected static ?string $navigationGroup = 'Room management';
 
-  // Check if the user can view any data
-  public static function canViewAny(): bool
-  {
-    $canView = self::checkPermission('READ');
-    if (!$canView) {
-      return false;
-    }
-    return true;
-  }
-
-  // Check if the user can create
   public static function canCreate(): bool
-  {
-    if (!self::canViewAny()) {
-      return false;
+    {
+        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
     }
-    return self::checkPermission('CREATE');
-  }
 
-  // Check if the user can edit
-  public static function canEdit(Model $record): bool
-  {
-    if (!self::canViewAny()) {
-      return false;
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
     }
-    return self::checkPermission('UPDATE');
-  }
 
-  // Check if the user can delete
-  public static function canDeleteAny(): bool
-  {
-    if (!self::canViewAny()) {
-      return false;
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
     }
-    return self::checkPermission('DELETE');
-  }
-  public static function canDelete(Model $record): bool
-  {
-    if (!self::canViewAny()) {
-      return false;
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
     }
-    return self::checkPermission('DELETE');
-  }
+
+  // private static function checkPermission(string $action): bool
+  // {
+  //   $permission = Permission::getPermissionByUserAndPermissionAndAction('Room', $action);
+  //   return isset($permission) && $permission->action;
+  // }
+
+  // // Check if the user can view any data
+  // public static function canViewAny(): bool
+  // {
+  //   $canView = self::checkPermission('READ');
+  //   if (!$canView) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
+  // // Check if the user can create
+  // public static function canCreate(): bool
+  // {
+  //   if (!self::canViewAny()) {
+  //     return false;
+  //   }
+  //   return self::checkPermission('CREATE');
+  // }
+
+  // // Check if the user can edit
+  // public static function canEdit(Model $record): bool
+  // {
+  //   if (!self::canViewAny()) {
+  //     return false;
+  //   }
+  //   return self::checkPermission('UPDATE');
+  // }
+
+  // // Check if the user can delete
+  // public static function canDeleteAny(): bool
+  // {
+  //   if (!self::canViewAny()) {
+  //     return false;
+  //   }
+  //   return self::checkPermission('DELETE');
+  // }
+  // public static function canDelete(Model $record): bool
+  // {
+  //   if (!self::canViewAny()) {
+  //     return false;
+  //   }
+  //   return self::checkPermission('DELETE');
+  // }
 
   public static function form(Form $form): Form
   {

@@ -40,26 +40,26 @@ class Room extends Model
     public static function getRoomById($id)
     {
 
-        return FacadesDB::table('rooms')->select(
-            'rooms.name as room_name',
+        return self::select(
+            'rooms.name',
             'rooms.price',
             'rooms.id',
-            'kos.name as kos_name',
-            'kos.address',
+            'rooms.description',
             'images.path',
             'images.file_name',
-            'reviews.star'
+            'reviews.star',
+            'reviews.user_id',
+            'reviews.review'
         )
-            ->join('kos', 'rooms.kos_id', '=', 'kos.id')
             ->join('images', 'images.room_id', '=', 'rooms.id')
             ->join('reviews', 'reviews.room_id', "=", "rooms.id")
-            ->where('rooms.available', true)->where('rooms.id', $id)
+            ->where('rooms.id', $id)
             ->get();
     }
 
     public static function getIdByRoomName($roomName)
     {
-        return FacadesDB::table('rooms')->select(
+        return self::select(
             'rooms.id',
             'rooms.name as room_name',
             'rooms.price',
@@ -79,17 +79,14 @@ class Room extends Model
     public static function getAvailableRooms()
     {
 
-        return FacadesDB::table('rooms')->select(
+        return self::select(
             'rooms.name as room_name',
             'rooms.price',
             'rooms.id',
-            'kos.name as kos_name',
-            'kos.address',
             'images.path',
             'images.file_name',
             'reviews.star'
         )
-            ->join('kos', 'rooms.kos_id', '=', 'kos.id')
             ->join('images', 'images.room_id', '=', 'rooms.id')
             ->join('reviews', 'reviews.room_id', "=", "rooms.id")
             ->where('rooms.available', true)

@@ -9,9 +9,10 @@ class RoomController extends Controller
 {
     public function details($id) {
 
-        $datas = Room::getAvailableRooms();
+        $data = Room::getRoomById($id);
+        // dd(json_encode($data));
 
-        return view('room.room-details', ["id" => $id]);
+        return view('room.room-details', ["id" => $id, "data" => $data]);
     }
 
     public function search(Request $request) {

@@ -51,7 +51,7 @@ Route::prefix('/dashboard')->middleware(['warga-admin', 'auth', 'terverifikasi']
    
 });
 
-Route::middleware(['auth', 'terverifikasi'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 

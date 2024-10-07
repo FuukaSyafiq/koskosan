@@ -19,11 +19,50 @@ class CreateRentedRoom extends CreateRecord
 {
     protected static string $resource = RentedRoomResource::class;
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        // Fetch the room ID based on the authenticated user's ID
+        $roomId = Room::where('user_id', auth()->user()->id)->value('id');
+
+        // Set the room_id in the form data
+        if ($roomId) {
+            $data['room_id'] = $roomId; // Assuming 'room_id' is the name of your field
+        }
+
+        return $data; // Return the modified data
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
 
         try {
             DB::beginTransaction();
+
+            if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
+                $record = static::getModel()::create([
+                    "user_id" => auth()->user()->id,
+                    "room_id" => $data['room_id'],
+                    "rent_time" => $data['rent_time']
+                ]);
+
+                // Mengupdate room agar tidak tersedia
+                $room = Room::where('id', $record->room_id)->first();
+                Room::where('id', $room->id)->update(['available' => false]);
+
+                // membuat tagihan sekarang
+                Tagihan::create([
+                    "amount" => $room->price,
+                    "rented_room_id" => $record->id,
+                    "is_settled" => false,
+                    "due_date" => Carbon::parse($data['rent_time']),
+                    "tanggal_notif" => Carbon::parse($data['rent_time']),
+                ]);
+
+                $record->save();
+                
+                DB::commit();
+                return $record;
+            }
 
             $userId = $data['user_id'];
             $record = static::getModel()::create([
@@ -32,42 +71,21 @@ class CreateRentedRoom extends CreateRecord
                 "rent_time" => $data['rent_time']
             ]);
 
-            // Mengupdate room agar tidak tersedia
+            // Mengupdate room sebelumnya agar tersedia
             $room = Room::where('id', $record->room_id)->first();
             Room::where('id', $room->id)->update(['available' => false]);
-
-            // update balance penyewa
-            User::where('id', $userId)->update(["balance" => DB::raw("balance - $room->price")]);
-
-            $owner = User::where('role_id', Role::getIdByRole("OWNER"))->first()->id;
-            // update balance owner
-            User::where('id', $owner)->update(["balance" => DB::raw("balance + $room->price")]);
-
 
             // membuat tagihan sekarang
             $tagihanSekarang = Tagihan::create([
                 "amount" => $room->price,
                 "rented_room_id" => $record->id,
-                "is_settled" => true,
-                "due_date" => Carbon::parse($data['rent_time']),
-            ]);
-
-            // membuat tagihan untuk bulan depan
-            Tagihan::create([
-                "amount" => $room->price,
-                "rented_room_id" => $record->id,
                 "is_settled" => false,
-                "tanggal_notif" => Carbon::parse($data['rent_time'])->addDays(25)->format('Y-m-d'),
-                "due_date" => Carbon::parse($data['rent_time'])->addDays(30)->format('Y-m-d')
+                "due_date" => Carbon::parse($data['rent_time']),
+                "tanggal_notif" => Carbon::parse($data['rent_time']),
             ]);
 
-            Transaction::create([
-                "tagihan_id" => $tagihanSekarang->id,
-                "sender_id" => $userId,
-                "receiver_id" => $owner
-            ]);
-
-
+            // dd($record);
+            $record->save();
             DB::commit();
 
             return $record;

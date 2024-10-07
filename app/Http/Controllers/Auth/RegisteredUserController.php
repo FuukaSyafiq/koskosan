@@ -42,10 +42,22 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-        
-        // $ktp = (new ImageController())->store($request, "ktp_files");
-        print_r($request);
-      
+
+        $ktp = (new ImageController())->store($request, "ktp");
+
+        User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "role_id" => Role::getIdByRole("PENYEWA"),
+            "contact" => $request->contact,
+            "balance" => 0,
+            "address" => $request->address,
+            "ktp_id" => $ktp->id,
+            "password" => Hash::make($request->password)
+        ]);
+
+
+
         return redirect()->to('/');
     }
 }

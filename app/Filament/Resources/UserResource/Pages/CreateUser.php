@@ -48,6 +48,7 @@ class CreateUser extends CreateRecord
 
             DB::commit();
 
+            $record->save();
             return $record;
         } catch (\Exception $e) {
             // Rollback the transaction on error
@@ -64,5 +65,18 @@ class CreateUser extends CreateRecord
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
+    }
+
+    public function mount(): void
+    {
+        $userId = auth()->user()->id;
+        $userRole = auth()->user()->role_id;
+
+        if($userRole === Role::getIdbyRole('PENYEWA')) {
+
+            // Redirect dynamically to the appropriate URL
+            redirect("/penyewa/users/{$userId}");
+            // redirect("/{$roleName}/payments/create");
+        }
     }
 }

@@ -16,11 +16,11 @@ class Image extends Model
 
     protected $fillable = [
         'file_name',
-        // 'mime_type',
+        'mime_type',
         'path',
-        'disk',
-        'room_id'
-        // 'size',
+        'room_id',
+        'size',
+        'is_vr'
     ];
 
     public static function getFileNameById($id)
