@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('sender_id');
-            $table->unsignedInteger('receiver_id');
+            $table->string('pengirim');
+            $table->string('room');
             $table->unsignedInteger('amount');
+            $table->date("tanggal_dibayar");
+            $table->unsignedInteger("invoice_id");
             $table->timestamps();
 
-            $table->foreign('sender_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('receiver_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign("invoice_id")->references("id")->on("invoice")->cascadeOnUpdate();
         });
     }
 

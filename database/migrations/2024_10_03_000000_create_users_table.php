@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->unsignedInteger('role_id');
             $table->string('password');
             $table->string('contact');
-            $table->unsignedBigInteger('balance')->default(0);
             $table->string('address');
             $table->unsignedInteger('ktp_id')->nullable();
             $table->rememberToken()->nullable();

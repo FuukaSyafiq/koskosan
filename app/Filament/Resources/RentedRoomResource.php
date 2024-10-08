@@ -76,7 +76,7 @@ class RentedRoomResource extends Resource
 
     {
         $currentRoomId = $record ? $record->room_id : null;
-        print_r($currentRoomId);
+        // print_r($currentRoomId);
         return $form
             ->schema([
                 Select::make('room_id')
@@ -115,14 +115,12 @@ class RentedRoomResource extends Resource
                         titleAttribute: 'name',
                         modifyQueryUsing: fn(Builder $query, $get) => $query
                             ->whereHas('role', fn($q) => $q->where('role', 'PENYEWA')) // Hanya pengguna dengan peran "PENYEWA"
-                            ->when($get('price'), function ($query, $price) {
-                                // Menggunakan harga yang diset dalam state sebagai batasan
-                                $query->where('balance', '>=', $price); // Hanya pengguna dengan saldo yang cukup
-                            })
                     )->required()->visible(fn($get) => auth()->user()->role_id === Role::getIdByRole("OWNER"))
                     ->label('Penyewa')->disabled(fn($get) => $get('price') == null),
                 DatePicker::make('rent_time')
-                    ->label('Waktu Awal Sewa')->required()
+                    ->label('Waktu Awal Sewa')
+                    ->required()
+                    ->minDate(now())
             ]);
     }
 

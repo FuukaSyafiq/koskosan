@@ -41,7 +41,6 @@ class CreateUser extends CreateRecord
                 "contact" => $data['contact'],
                 "email" => $data['email'],
                 "password" => Hash::make($data['password']),
-                "balance" => 0,
                 "role_id" => Role::getIdByRole("PENYEWA"),
                 "ktp_id" => $ktp->id
             ]);

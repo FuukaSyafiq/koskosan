@@ -9,20 +9,11 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['amount', 'sender_id', 'receiver_id'];
+    protected $fillable = ['amount', 'pengirim', 'invoice_id', 'room', 'tanggal_dibayar'];
 
-    public function tagihan()
+    public function invoice()
     {
-        return $this->belongsTo(Tagihan::class);
+        return $this->belongsTo(Invoice::class, 'invoice_id');
     }
 
-    public function sender()
-    {
-        return $this->belongsTo(User::class, 'sender_id');
-    }
-
-    public function receiver()
-    {
-        return $this->belongsTo(User::class, 'receiver_id');
-    }
 }

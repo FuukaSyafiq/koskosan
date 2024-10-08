@@ -17,9 +17,11 @@ return new class extends Migration
             $table->unsignedInteger('amount');
             $table->boolean('is_settled')->default(false);
             $table->date('due_date');
+            $table->date("tanggal_dibayar")->nullable();
             $table->date('tanggal_notif')->nullable();
             
-            $table->foreign('rented_room_id')->references('id')->on('rented_rooms')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('rented_room_id')->references('id')->on('rented_rooms')
+            ->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

@@ -29,7 +29,6 @@ class User extends Authenticatable
         'role_id',
         "password",
         "contact",
-        "balance",
         "address",
         "ktp_id"
     ];

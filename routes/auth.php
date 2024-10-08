@@ -46,10 +46,6 @@ Route::prefix("/permission")->group(function () {
 });
 
 
-Route::prefix('/dashboard')->middleware(['warga-admin', 'auth', 'terverifikasi'])->group(function () {
-
-   
-});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
+use App\Models\Image;
 use App\Models\Role;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -11,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,15 +61,22 @@ class TransactionResource extends Resource
     {
         return $table->modifyQueryUsing(function ($query) {
             if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
-                return $query->where('sender_id', auth()->user()->id);
+                return $query->where('pengirim', auth()->user()->name);
             }
             return $query;
         })
             ->columns([
                 TextColumn::make('amount')->label('Nominal')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')),
-                TextColumn::make('sender.name')->label('pengirim'),
-                TextColumn::make('receiver.name')->label('penerima'),
-                TextColumn::make('created_at')->label('Tanggal')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                TextColumn::make('pengirim')->label('pengirim'),
+                TextColumn::make('no_invoice')->label('No Invoice'),
+                TextColumn::make('tanggal_dibayar')->label('Tanggal dibayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                ImageColumn::make('image.path')
+                    ->label('Invoice')->getStateUsing(callback: function ($record) {
+                        // dd($record->id);
+                        $image = Image::where('id', $record->invoice_file)->first();
+                        // Debugging untuk melihat nilai yang didapat
+                        return url($image->path) ?? null;
+                    })
             ])
             ->filters([
                 //

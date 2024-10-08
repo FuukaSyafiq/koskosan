@@ -33,7 +33,7 @@ class TagihanResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false;
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
     }
 
     public static function canEdit(Model $record): bool
@@ -60,25 +60,33 @@ class TagihanResource extends Resource
     {
         return $form
             ->schema([
-                // Section::make()
-                //     ->schema([
-                //         Select::make('rented_room_id')
-                //             ->label('Kamar')
-                //             ->relationship(
-                //                 name: 'rentedRoom',
-                //                 titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
-                //                 modifyQueryUsing: fn(Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
-                //                     ->where('rooms.available', false)
-                //             )
-                //             ->required(),
-                //         TextInput::make('amount')
-                //             ->label('Jumlah Tagihan')
-                //             ->required()
-                //             ->prefix('Rp.'),
-                //         DatePicker::make('due_date')
-                //             ->label('Tanggal jatuh tempo')
-                //             ->required()
-                //     ])->columns(2)
+                Section::make()
+                    ->schema([
+                        Select::make('rented_room_id')
+                            ->label('Kamar')
+                            ->relationship(
+                                name: 'rentedRoom',
+                                titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
+                                modifyQueryUsing: fn(Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
+                                    ->where('rooms.available', false)
+                            )
+                            ->required()
+                            ->reactive() // Make this field reactive to trigger changes
+                            ->afterStateUpdated(fn (callable $set, $state) => 
+                                // Fetch the price based on the selected room ID
+                                $set('amount', \App\Models\RentedRoom::find($state)?->room->price)
+                            ),
+                        TextInput::make('amount')
+                            ->label('Jumlah Tagihan')
+                            ->required()
+                            ->prefix('Rp.')
+                            ->reactive()
+                            ->default(fn($get) => $get('amount'))
+                            ->readOnly(true),
+                        DatePicker::make('due_date')
+                            ->label('Tanggal jatuh tempo')
+                            ->required()
+                    ])->columns(2)
             ]);
     }
 
@@ -97,7 +105,7 @@ class TagihanResource extends Resource
                 return $query; // Kembalikan query asli jika bukan PENYEWA
             })
             ->columns([
-                TextColumn::make('rentedRoom.room.name')->label('Room Name'),
+                TextColumn::make('rentedRoom.room.name')->label('Kamar'),
                 TextColumn::make('rentedRoom.user.name')->label('Penyewa'),
                 TextColumn::make('amount')
                     ->label('Jumlah tagihan')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')), // Memformat sebagai mata uang
@@ -105,7 +113,7 @@ class TagihanResource extends Resource
                     ->label('Sudah dibayar'),
                 TextColumn::make('due_date')
                     ->label('Tanggal terakhir bayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
-                TextColumn::make('created_at')
+                TextColumn::make('tanggal_dibayar')
                     ->label('Tanggal dibayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
                 TextColumn::make('tanggal_notif')
                     ->label('Tanggal pemberitahuan')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y'))

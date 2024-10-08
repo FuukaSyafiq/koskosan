@@ -31,7 +31,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/CalculateRating.php"
+            "app/Helpers/CalculateRating.php",
+            "app/Helpers/GenerateInvoiceNumber.php"
         ]
     },
     "autoload-dev": {

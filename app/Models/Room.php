@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use DB;
-use Illuminate\Support\Facades\DB as FacadesDB;
+use Illuminate\Support\Facades\DB;
 
 class Room extends Model
 {
@@ -36,23 +35,27 @@ class Room extends Model
     {
         return $this->hasMany(RentedRoom::class);
     }
-    
+
     public static function getRoomById($id)
     {
 
         return self::select(
-            'rooms.name',
+            'rooms.name as room_name',
             'rooms.price',
             'rooms.id',
             'rooms.description',
-            'images.path',
+            DB::raw('DISTINCT images.path'),
             'images.file_name',
-            'reviews.star',
+            'rooms.facility',
+            DB::raw('AVG(reviews.star) as avg_star'),
             'reviews.user_id',
-            'reviews.review'
+            'users.name',
+            'reviews.review',
+            'reviews.created_at'
         )
-            ->join('images', 'images.room_id', '=', 'rooms.id')
-            ->join('reviews', 'reviews.room_id', "=", "rooms.id")
+            ->leftJoin('images', 'images.room_id', '=', 'rooms.id')
+            ->leftJoin('reviews', 'reviews.room_id', "=", "rooms.id")
+            ->leftJoin('users', 'reviews.user_id', '=', 'users.id')
             ->where('rooms.id', $id)
             ->get();
     }
@@ -97,4 +100,5 @@ class Room extends Model
     {
         return $this->belongsTo('');
     }
+
 }

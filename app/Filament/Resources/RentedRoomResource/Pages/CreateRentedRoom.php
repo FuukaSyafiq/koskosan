@@ -54,12 +54,13 @@ class CreateRentedRoom extends CreateRecord
                     "amount" => $room->price,
                     "rented_room_id" => $record->id,
                     "is_settled" => false,
+                    "tanggal_dibayar" => null,
                     "due_date" => Carbon::parse($data['rent_time']),
                     "tanggal_notif" => Carbon::parse($data['rent_time']),
                 ]);
 
                 $record->save();
-                
+
                 DB::commit();
                 return $record;
             }
@@ -76,10 +77,11 @@ class CreateRentedRoom extends CreateRecord
             Room::where('id', $room->id)->update(['available' => false]);
 
             // membuat tagihan sekarang
-            $tagihanSekarang = Tagihan::create([
+            Tagihan::create([
                 "amount" => $room->price,
                 "rented_room_id" => $record->id,
                 "is_settled" => false,
+                "tanggal_dibayar" => null,
                 "due_date" => Carbon::parse($data['rent_time']),
                 "tanggal_notif" => Carbon::parse($data['rent_time']),
             ]);

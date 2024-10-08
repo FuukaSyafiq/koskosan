@@ -64,7 +64,6 @@ class EditRentedRoom extends EditRecord
         if (isset($data['room_id'])) {
             // Mengupdate kamar yang sedang digunakan menjadi tersedia
             $isSuccess = Room::where('id', $room->id)->update(['available' => true]);
-            // dd($isSuccess);
 
             // Mengupdate kamar baru menjadi tidak tersedia
             Room::where('id', $data['room_id'])->update(['available' => false]);

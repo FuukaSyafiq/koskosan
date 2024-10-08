@@ -29,7 +29,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-user';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationLabel(): string
     {
@@ -167,8 +167,6 @@ class UserResource extends Resource
                     ->label('nama penyewa'),
                 TextColumn::make('email')
                     ->label('email'),
-                TextColumn::make('balance')
-                    ->label('saldo')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')),
                 TextColumn::make('address')
                     ->label('Alamat'),
                 TextColumn::make('contact')

@@ -6,72 +6,110 @@
 
 @endphp
 
-<div class="flex w-11/12 mx-auto justify-center items-center">
-    <div class="flex flex-col mt-10 w-1/3 space-y-4">
-        <!-- Main Image Container -->
-        <div class="rounded-md overflow-hidden">
-            <img src="{{ $data[0]['path'] }}" class="object-cover w-full h-80" alt="image" />
+@if (count($data) > 0)
+    <div class="flex w-11/12 mx-auto my-auto pt-7 justify-center items-center flex-col md:flex-col lg:flex-row">
+        <div class="flex flex-col mt-10 w-full md:w-full lg:w-1/3 space-y-4">
+            <!-- Main Image Container -->
+            @if (isset($data[0]['path']))
+                <div class="w-full rounded-md overflow-hidden">
+                    <img src="{{ $data[0]['path'] }}" class="object-cover w-full h-80" alt="image" />
+                </div>
+
+                <!-- Thumbnail Images -->
+                <div class="flex justify-center gap-3">
+                    @foreach ($data as $key => $val)
+                        {{-- {{dd($val)}} --}}
+                        {{-- <img src="{{ $data[$key]['path'] }}"
+                            class="w-[90px] h-[90px] flex flex-wrap gap-1 justify-between rounded-md" alt="thumbnail" /> --}}
+                    @endforeach
+                </div>
+            @endif()
         </div>
 
-        <!-- Thumbnail Images -->
-        <div class="flex justify-center gap-3">
-            @foreach ($data as $key => $val)
-                <img src="{{ $data[$key]['path'] }}"
-                    class="w-[90px] h-[90px] flex flex-wrap gap-1 justify-between rounded-md" alt="thumbnail" />
-            @endforeach
-        </div>
-
-        <button type="button"
-            class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">SEWA</button>
-    </div>
-
-    <!-- Room Details -->
-    <div class="flex flex-col justify-center w-1/3 mt-5">
-        <h1 class="font-bold text-5xl text-center">{{ $data[0]['name'] }}</h1>
-
-        <h2 class="font-bold text-2xl text-center">
-            Rp. {{ number_format($data[0]['price'], 0, ',', '.') }}/Bulan
-        </h2>
-        <span class="text-gray-500">
-
-            <div class="flex">
-                @for ($i = 1; $i <= $data[0]['star']; $i++)
+        <!-- Room Details -->
+        <div class="flex flex-col justify-center w-full md:w-full lg:w-1/3 mt-5 space-y-4">
+            <h1 class="font-bold text-3xl text-center">{{ $data[0]['room_name'] }}</h1>
+            <div class="flex justify-center items-center">
+                @for ($i = 1; $i <= $data[0]['avg_stars']; $i++)
                     <x-star />
                 @endfor
-            </div>
-            {{-- @foreach ($data as $key => $item)
-            
-                {{ calculateRating($data[$key]['star']) }}
-            @endforeach () --}} Rating
-        </span>
-
-        <p class="mt-3 text-lg text-center text-gray-700">Description</p>
-        <p class="ml-2 text-left text-gray-600 mb-4">{{ $data[0]['description'] }}</p>
-
-        <h3 class="font-semibold text-lg text-center">Fasilitas</h3>
-        <ul class="flex flex-wrap justify-center space-x-2">
-            <!-- Example facility -->
-            <li class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Facility</li>
-        </ul>
-    </div>
-</div>
-
-<!-- Reviews Section -->
-<div class="w-11/12 mx-auto mt-10">
-    <h3 class="font-semibold text-lg text-center">Reviews</h3>
-    <div class="space-y-4">
-        @foreach ($data as $item)
-            <div class="border p-4 flex rounded-md shadow-sm">
-                <p class="font-bold">{{ $item['review'] }}</p>
-                <span>
-                    <div class="flex">
-                        @for ($i = 1; $i <= $item['star']; $i++)
-                            <x-star />
-                        @endfor
-                    </div>
-                    {{-- <span class="text-gray-500">{{ $item['user_id'] }}</span> --}}
+                <span
+                    class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
+                    {{ $data[0]['avg_stars'] }}
                 </span>
             </div>
-        @endforeach
+            <h2 class="font-bold text-2xl text-center">
+                Rp. {{ number_format($data[0]['price'], 0, ',', '.') }}/Bulan
+
+            </h2>
+
+            <hr class="w-48 h-1 mx-auto border-0 bg-gray-600 rounded" />
+
+            <div class="block max-w-sm p-6 mx-auto">
+                <p class="mt-3 text-lg text-center text-gray-700">Description</p>
+                <p class="ml-2 text-left text-gray-600 mb-4">{{ $data[0]['description'] }}</p>
+            </div>
+
+            <div class="block max-w-sm p-6 mx-auto">
+                <h3 class="font-semibold text-lg text-center">Fasilitas</h3>
+
+                <p class="ml-2 text-left text-gray-600 mb-4">{{ $data[0]['facility'] }}</p>
+
+            </div>
+        </div>
     </div>
-</div>
+
+    <!-- Reviews Section -->
+    <div class="w-11/12 mx-auto my-10">
+        <h3 class="font-semibold text-lg text-center">Reviews</h3>
+        <div class="space-y-4">
+            @if (auth()->check())
+                <form action="/rating/room/{{ $data[0]['id'] }}?userid={{ auth()->user()->id ?? null }}" method="POST">
+                    @csrf
+                    <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Give
+                        Review</label>
+                    {{-- <x-star-input /> --}}
+                    <div class="flex flex-col w-1/5">
+                        <label for="star">Star :</label>
+                        <input type="number" placeholder="5" id="star" name="star" max="5"
+                            class="my-2 rounded-md" />
+                    </div>
+                    <textarea id="message" rows="4"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        placeholder="Write your reviews here..." name="review"></textarea>
+                    <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 mt-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Send</button>
+                </form>
+            @endif
+            @foreach ($data as $item)
+                @if (isset($item['review']))
+                    <figure class="w-full shadow-lg p-5">
+                        <div class="flex items-center mb-4 text-yellow-300">
+                            @for ($i = 1; $i <= $item->star; $i++)
+                                <x-star />
+                            @endfor
+                        </div>
+                        <blockquote>
+                            <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $item->review }}</p>
+                        </blockquote>
+                        <figcaption class="flex items-center mt-6 space-x-3 rtl:space-x-reverse">
+                            <img class="w-6 h-6 rounded-full" src="https://placehold.co/100x100" alt="profile picture">
+                            <div
+                                class="flex items-center divide-x-2 rtl:divide-x-reverse divide-gray-300 dark:divide-gray-700">
+                                <cite class="pe-3 font-medium text-gray-900 dark:text-white">{{ $item->name }}</cite>
+                            </div>
+                        </figcaption>
+                        <cite class="pe-3 font-medium text-gray-900 dark:text-white">{{ $item->created_at }}</cite>
+                    </figure>
+                @else
+                    <div class="border p-4 flex justify-center items-center rounded-md shadow-sm">
+                        <h1 class="font-bold text-2xl my-5">Tidak ada review</h1>
+                    </div>
+                @endif
+            @endforeach
+        </div>
+    </div>
+@else
+    <h1 class="font-bold text-3xl text-center flex w-full h-screen justify-center items-center">Room Tidak Ditemukan
+    </h1>
+@endif

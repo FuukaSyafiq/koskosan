@@ -22,7 +22,6 @@ class RoleController extends Controller
     public function delete(Request $request)
     {
         $role = $request->input("role");
-        print_r($role);
 
         Role::deleteRole($role);
         return response()->json([

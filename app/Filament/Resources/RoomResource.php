@@ -62,56 +62,7 @@ class RoomResource extends Resource
         return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
     }
 
-  // private static function checkPermission(string $action): bool
-  // {
-  //   $permission = Permission::getPermissionByUserAndPermissionAndAction('Room', $action);
-  //   return isset($permission) && $permission->action;
-  // }
-
-  // // Check if the user can view any data
-  // public static function canViewAny(): bool
-  // {
-  //   $canView = self::checkPermission('READ');
-  //   if (!$canView) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
-  // // Check if the user can create
-  // public static function canCreate(): bool
-  // {
-  //   if (!self::canViewAny()) {
-  //     return false;
-  //   }
-  //   return self::checkPermission('CREATE');
-  // }
-
-  // // Check if the user can edit
-  // public static function canEdit(Model $record): bool
-  // {
-  //   if (!self::canViewAny()) {
-  //     return false;
-  //   }
-  //   return self::checkPermission('UPDATE');
-  // }
-
-  // // Check if the user can delete
-  // public static function canDeleteAny(): bool
-  // {
-  //   if (!self::canViewAny()) {
-  //     return false;
-  //   }
-  //   return self::checkPermission('DELETE');
-  // }
-  // public static function canDelete(Model $record): bool
-  // {
-  //   if (!self::canViewAny()) {
-  //     return false;
-  //   }
-  //   return self::checkPermission('DELETE');
-  // }
-
+  
   public static function form(Form $form): Form
   {
     return $form
@@ -139,7 +90,8 @@ class RoomResource extends Resource
             FileUpload::make('images')
               ->multiple()->directory("Image") // Enable multiple file uploads
               ->image() // Specify that the upload is for images
-              ->required(), // Optional: Make the field required
+              ->required() // Optional: Make the field required
+              ->maxFiles(4)
           ]),
         Section::make('VR Upload')
           ->schema([
@@ -158,8 +110,18 @@ class RoomResource extends Resource
           ->label('nama ruang'),
         BooleanColumn::make('available')
           ->label('tersedia'),
+        TextColumn::make('')
+          ->label('Penyewa')
+          ->getStateUsing(function ($record) {
+            // Fetch the rented_room record based on the room_id and get the user_id
+            $rentedRoom = \App\Models\RentedRoom::where('room_id', $record->id)->first();
+            
+            // If a rented_room is found, get the user's name from the user_id, otherwise return an empty string
+            return $rentedRoom ? \App\Models\User::find($rentedRoom->user_id)?->name ?? '' : '';
+          }),
         TextColumn::make('price')
           ->label('Harga'),
+          // ->prefix('Rp.'),
         TextColumn::make('description')
           ->label('deskripsi')
           ->limit(50),

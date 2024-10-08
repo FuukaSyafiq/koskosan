@@ -5,9 +5,12 @@ namespace App\Filament\Resources\PaymentResource\Pages;
 use App\Filament\Resources\PaymentResource;
 use App\Models\RentedRoom;
 use App\Models\Role;
+use App\Models\Room;
 use App\Models\Tagihan;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Image;
+use App\Models\Invoice;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Notifications\Notification;
@@ -19,6 +22,17 @@ use Illuminate\Support\Facades\DB;
 class CreatePayment extends CreateRecord
 {
     protected static string $resource = PaymentResource::class;
+
+    private function store($filename): Image
+    {
+        $fileDB = Image::create([
+            'file_name' => $filename,
+            'mime_type' => null,
+            'path' => '/storage' . '/' . $filename,
+            'size' => null,
+        ]);
+        return $fileDB;
+    }
 
     public  function getBreadcrumb(): string
     {
@@ -33,60 +47,71 @@ class CreatePayment extends CreateRecord
     public function handleRecordCreation(array $data): Model
     {
         $user = auth()->user();
-        
+
         try {
             // dd($data);
             DB::beginTransaction();
-            if( $user->role_id === Role::getIdByRole('OWNER')) {
+            if ($user->role_id === Role::getIdByRole('OWNER')) {
                 $userId = (int) $data['user_id']; // Cast user_id to integer
-                $user = User::find($userId);
+                $user = User::where('id', $userId)->first();
+
+                $rentedRoom = RentedRoom::where('room_id', $data['room_id'])->where('user_id', $user->id)->first();
+
+                $roomYangDisewa = Room::where('id', $rentedRoom->room_id)->first();
+
+                $tagihanYangAkanDibayar = Tagihan::where('rented_room_id', $rentedRoom->id)->update([
+                    "is_settled" => true,
+                    "tanggal_dibayar" => $data['tanggal_dibayar']
+                ]);
+                // dd($tagihanYangAkanDibayar);
+
+                $tagihanJatuhtempoSekarang = Tagihan::where('id', $data['due_date'])->first();
+
+
+                Tagihan::create([
+                    "amount" => $data['tagihan'],
+                    "rented_room_id" => $rentedRoom->id,
+                    "is_settled" => false,
+                    "tanggal_dibayar" => null,
+                    "due_date" => Carbon::parse($tagihanJatuhtempoSekarang->due_date)->addDays(30),  // 30 days after current due_date
+                    "tanggal_notif" => Carbon::parse($tagihanJatuhtempoSekarang->due_date)->addDays(25),  // 25 days from now
+                ]);
+
+                $noInvoice = GenerateInvoiceNumber();
+                $invoiceFile = $this->store($data['invoice_file']);
+                
+                $invoice = Invoice::create([
+                "no_invoice" => $noInvoice,
+                "invoice_file" => $invoiceFile->id
+            ]);
+
+                Transaction::create([
+                    "pengirim" => $user->name,
+                    "room" => $roomYangDisewa->name,
+                    "amount" => $data['tagihan'],
+                    "tanggal_dibayar" => $data['tanggal_dibayar'],
+                    "invoice_id" => $invoice->id,
+                ]);
+
+
+                DB::commit();
+                return $user;
             }
 
-            // if ($user->balance < $data['tagihan']) {
-            //     // Rollback the transaction if balance is insufficient
-            //     DB::rollBack();
-    
-            //     // Trigger a warning notification and prevent form submission
-            //     Notification::make() // Assuming you're using Laravel Filament for notifications
-            //         ->warning()
-            //         ->title('Saldo tidak cukup')
-            //         ->body("Saldo Penyewa tidak mencukupi biaya tagihan,silahkan Top up Saldo.")
-            //         ->send();
-    
-            //     throw new \Exception("User balance is insufficient.");
-            // }
+            $rentedRoom = RentedRoom::where('room_id', $data['room_id'])->where('user_id', $user->id)->first();
 
-            User::where('id', $user->id)->update([
-                'balance' => DB::raw("balance - {$data['tagihan']}")
+            $roomYangDisewa = Room::where('id', $rentedRoom->room_id)->first();
+
+            $noInvoice = GenerateInvoiceNumber();
+                
+            $invoiceFile = $this->store($data['invoice_file']);
+
+            Invoice::create([
+                "no_invoice" => $noInvoice,
+                "invoice_file" => $invoiceFile->id
             ]);
 
-            $receiver =  User::where('role_id', Role::getIdByRole("OWNER"))->first();
-            User::where('role_id', Role::getIdByRole("OWNER"))->update(["balance" => DB::raw("balance + {$data['tagihan']}")]);
-
-            $rentedRoom = RentedRoom::where('room_id', $data['room_id'])->first();
-
-            $tagihanSekarang = Tagihan::where('rented_room_id', $rentedRoom->id)->first();
-
-            Tagihan::where('rented_room_id', $rentedRoom->id)->update([
-                "is_settled" => true
-            ]);
-
-            $tagihanJatuhtempoSekarang = Tagihan::where('id', $data['due_date'])->first();
-
-            Tagihan::create([
-                "amount" => $data['tagihan'],
-                "rented_room_id" => $rentedRoom->id,
-                "is_settled" => false,
-                "due_date" => Carbon::parse($tagihanJatuhtempoSekarang->due_date)->addDays(30),  // 30 days after current due_date
-                "tanggal_notif" => Carbon::parse($tagihanJatuhtempoSekarang->due_date)->addDays(25),  // 25 days from now
-            ]);
-
-            Transaction::create([
-                "sender_id" => $user->id,
-                "receiver_id" => $receiver->id,
-                "amount" => $data['tagihan']
-            ]);
-
+          
             DB::commit();
             return $user;
         } catch (\Exception $e) {

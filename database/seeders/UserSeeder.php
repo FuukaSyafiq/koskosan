@@ -19,10 +19,10 @@ class UserSeeder extends Seeder
         $password = FacadesHash::make('password');
         $datas = [
             //admin 
-            ["name" => "Umi Qosim", "email" => "admin@gmail.com", "password" => $password, "balance" => 500000, "role_id" => Role::getIdByRole("OWNER"), "address" => "BABADAN RT 02, WONOREJO, KEDAWUNG, SRAGEN", "contact" => "000000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],
+            ["name" => "Umi Qosim", "email" => "admin@gmail.com", "password" => $password,"role_id" => Role::getIdByRole("OWNER"), "address" => "BABADAN RT 02, WONOREJO, KEDAWUNG, SRAGEN", "contact" => "000000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],
             // penyewa
-            ["name" => "Agus", "email" => "agus@gmail.com", "password" => $password, "balance" => 500000, "role_id" => Role::getIdByRole("PENYEWA"), "address" => "Jalan Raya Sukowati No. 15, Sragen", "contact" => "000000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],
-            ["name" => "Budi", "email" => "budi@gmail.com", "password" => $password, "balance" => 500000, "role_id" => Role::getIdByRole("PENYEWA"), "address" => "Jalan Diponegoro No. 23, Sragen Wetan, Sragen", "contact" => "081000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],
+            ["name" => "Agus", "email" => "agus@gmail.com", "password" => $password, "role_id" => Role::getIdByRole("PENYEWA"), "address" => "Jalan Raya Sukowati No. 15, Sragen", "contact" => "000000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],
+            ["name" => "Budi", "email" => "budi@gmail.com", "password" => $password, "role_id" => Role::getIdByRole("PENYEWA"), "address" => "Jalan Diponegoro No. 23, Sragen Wetan, Sragen", "contact" => "081000000000", "ktp_id" => Image::getIdByFilename("ktp_dummy.jpeg")],
         ];
 
         foreach ($datas as $value) {

@@ -35,6 +35,7 @@ class EditRoom extends EditRecord
 
             DB::beginTransaction();
             if (isset($data['images'])) {
+                Image::where('room_id', $record->id)->delete();
                 foreach ($data['images'] as $image) {
                     $this->store($image, $record->id);
                 }

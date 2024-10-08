@@ -7,6 +7,7 @@ use App\Http\Controllers\PermissionManager;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
+use App\View\Components\Denah;
 use App\View\Components\EditUserProfile;
 use Illuminate\Support\Facades\Route;
 
@@ -26,9 +27,10 @@ use Illuminate\Support\Facades\Route;
 
 //
 Route::get('/', [IndexController::class, 'gets'])->name('index');
-Route::get('/kos', [KosController::class, 'search']);
+Route::post('/', [IndexController::class, 'store']);
 // Route::get('/room', [RoomController::class, 'search']);
 Route::get('/room/{id}', [RoomController::class, 'details']);
+Route::get('/denah', [Denah::class, 'render']);
 
 //permission manager route (for debug purpose)
 Route::post("/roles", [RoleController::class, "store"]);
@@ -44,4 +46,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
+require __DIR__ . '/rating.php';
