@@ -19,6 +19,14 @@ class CreateRentedRoom extends CreateRecord
 {
     protected static string $resource = RentedRoomResource::class;
 
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->label('Buat'),
+            $this->getCancelFormAction()->label('Batal'),
+        ];
+    }
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         // Fetch the room ID based on the authenticated user's ID

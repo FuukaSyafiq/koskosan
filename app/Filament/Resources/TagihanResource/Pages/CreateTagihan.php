@@ -25,4 +25,12 @@ class CreateTagihan extends CreateRecord
 
         return $data;
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->label('Buat'),
+            $this->getCancelFormAction()->label('Batal'),
+        ];
+    }
 }

@@ -1,26 +1,41 @@
 <x-header />
 
 @php
-    // require_once app_path();
-    use App\Helpers\CalculateRating;
+    use App\Models\RentedRoom;
+    use Carbon\Carbon;
+
+    $user = auth()->check();
+
+    if ($user) {
+        $rentedRoom = RentedRoom::where('room_id', $room[0]['id'])
+            ->where('user_id', auth()->user()->id)
+            ->first();
+    }
+    $vrImage = collect($room)->firstWhere('is_vr', true);
+
+    // Jika tidak ada gambar VR, ambil gambar pertama sebagai fallback
+    $imagePath = $vrImage ? $vrImage['path'] : $room[0]['path'];
 
 @endphp
 
-@if (count($data) > 0)
+@if (count($room) > 0)
+    <div class="w-full m-5">
+        <a href="/roomlist" class="font-bold">Back</a>
+    </div>
     <div class="flex w-11/12 mx-auto my-auto pt-7 justify-center items-center flex-col md:flex-col lg:flex-row">
         <div class="flex flex-col mt-10 w-full md:w-full lg:w-1/3 space-y-4">
             <!-- Main Image Container -->
-            @if (isset($data[0]['path']))
+            @if (isset($room[0]['path']))
                 <div class="w-full rounded-md overflow-hidden">
-                    <img src="{{ $data[0]['path'] }}" class="object-cover w-full h-80" alt="image" />
+                    <img src="{{ $imagePath }}" class="object-cover w-full h-80" alt="image" />
                 </div>
 
                 <!-- Thumbnail Images -->
                 <div class="flex justify-center gap-3">
-                    @foreach ($data as $key => $val)
+                    @foreach ($room as $key => $val)
                         {{-- {{dd($val)}} --}}
-                        {{-- <img src="{{ $data[$key]['path'] }}"
-                            class="w-[90px] h-[90px] flex flex-wrap gap-1 justify-between rounded-md" alt="thumbnail" /> --}}
+                        <img src="{{ $room[$key]['path'] }}"
+                            class="w-[90px] h-[90px] flex flex-wrap gap-1 justify-between rounded-md" alt="thumbnail" />
                     @endforeach
                 </div>
             @endif()
@@ -28,18 +43,18 @@
 
         <!-- Room Details -->
         <div class="flex flex-col justify-center w-full md:w-full lg:w-1/3 mt-5 space-y-4">
-            <h1 class="font-bold text-3xl text-center">{{ $data[0]['room_name'] }}</h1>
+            <h1 class="font-bold text-3xl text-center">{{ $room[0]['name'] }}</h1>
             <div class="flex justify-center items-center">
-                @for ($i = 1; $i <= $data[0]['avg_stars']; $i++)
+                @for ($i = 1; $i <= $avgRating->avg_star; $i++)
                     <x-star />
                 @endfor
                 <span
                     class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
-                    {{ $data[0]['avg_stars'] }}
+                    {{ number_format($avgRating->avg_star, 1) }}
                 </span>
             </div>
             <h2 class="font-bold text-2xl text-center">
-                Rp. {{ number_format($data[0]['price'], 0, ',', '.') }}/Bulan
+                Rp. {{ number_format($room[0]['price'], 0, ',', '.') }}/Bulan
 
             </h2>
 
@@ -47,13 +62,13 @@
 
             <div class="block max-w-sm p-6 mx-auto">
                 <p class="mt-3 text-lg text-center text-gray-700">Description</p>
-                <p class="ml-2 text-left text-gray-600 mb-4">{{ $data[0]['description'] }}</p>
+                <p class="ml-2 text-left text-gray-600 mb-4">{{ $room[0]['description'] }}</p>
             </div>
 
             <div class="block max-w-sm p-6 mx-auto">
                 <h3 class="font-semibold text-lg text-center">Fasilitas</h3>
 
-                <p class="ml-2 text-left text-gray-600 mb-4">{{ $data[0]['facility'] }}</p>
+                <p class="ml-2 text-left text-gray-600 mb-4">{{ $room[0]['facility'] }}</p>
 
             </div>
         </div>
@@ -63,8 +78,8 @@
     <div class="w-11/12 mx-auto my-10">
         <h3 class="font-semibold text-lg text-center">Reviews</h3>
         <div class="space-y-4">
-            @if (auth()->check())
-                <form action="/rating/room/{{ $data[0]['id'] }}?userid={{ auth()->user()->id ?? null }}" method="POST">
+            @if (isset($rentedRoom))
+                <form action="/rating/room/{{ $room[0]['id'] }}?userid={{ auth()->user()->id ?? null }}" method="POST">
                     @csrf
                     <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Give
                         Review</label>
@@ -81,8 +96,8 @@
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 mt-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Send</button>
                 </form>
             @endif
-            @foreach ($data as $item)
-                @if (isset($item['review']))
+            @foreach ($review as $item)
+                @if (isset($item->review))
                     <figure class="w-full shadow-lg p-5">
                         <div class="flex items-center mb-4 text-yellow-300">
                             @for ($i = 1; $i <= $item->star; $i++)
@@ -99,14 +114,16 @@
                                 <cite class="pe-3 font-medium text-gray-900 dark:text-white">{{ $item->name }}</cite>
                             </div>
                         </figcaption>
-                        <cite class="pe-3 font-medium text-gray-900 dark:text-white">{{ $item->created_at }}</cite>
+                        <cite
+                            class="pe-3 mt-3 font-medium text-gray-900 dark:text-white">{{ Carbon::parse($item->created_at)->translatedFormat('l, j F Y') }}</cite>
                     </figure>
-                @else
-                    <div class="border p-4 flex justify-center items-center rounded-md shadow-sm">
-                        <h1 class="font-bold text-2xl my-5">Tidak ada review</h1>
-                    </div>
                 @endif
             @endforeach
+            @if (!isset($reviews))
+                <div class="border p-4 flex justify-center items-center rounded-md shadow-sm">
+                    <h1 class="font-bold text-2xl my-5">Tidak ada review</h1>
+                </div>
+            @endif
         </div>
     </div>
 @else

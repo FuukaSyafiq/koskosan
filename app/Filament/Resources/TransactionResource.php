@@ -5,8 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Image;
+use App\Models\Invoice;
 use App\Models\Role;
-use App\Models\Transaction;
+use App\Models\VerifikasiPembayaran;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransactionResource extends Resource
 {
-    protected static ?string $model = Transaction::class;
+    protected static ?string $model = VerifikasiPembayaran::class;
 
     protected static ?string $navigationIcon = 'heroicon-c-circle-stack';
     protected static ?string $navigationLabel = 'Transaction history';
@@ -61,7 +62,7 @@ class TransactionResource extends Resource
     {
         return $table->modifyQueryUsing(function ($query) {
             if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
-                return $query->where('pengirim', auth()->user()->name);
+                return $query->where('pengirim', auth()->user()->name)->first();
             }
             return $query;
         })
@@ -69,17 +70,19 @@ class TransactionResource extends Resource
                 TextColumn::make('amount')->label('Nominal')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')),
                 TextColumn::make('pengirim')->label('pengirim'),
                 TextColumn::make('no_invoice')->label('No Invoice'),
+                TextColumn::make('created_at')->label('Tanggal diverifikasi')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
                 TextColumn::make('tanggal_dibayar')->label('Tanggal dibayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
-                ImageColumn::make('image.path')
+                ImageColumn::make('bukti_file.path')
                     ->label('Invoice')->getStateUsing(callback: function ($record) {
                         // dd($record->id);
-                        $image = Image::where('id', $record->invoice_file)->first();
+                        $invoice = VerifikasiPembayaran::where('id', $record->id)->first();
+                        $image = Image::where('id', $invoice->bukti_file)->first();
                         // Debugging untuk melihat nilai yang didapat
                         return url($image->path) ?? null;
                     })
             ])
             ->filters([
-                //
+                // SelectFilter::make('')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

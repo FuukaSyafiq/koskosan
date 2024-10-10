@@ -17,6 +17,14 @@ class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->label('Buat'),
+            $this->getCancelFormAction()->label('Batal'),
+        ];
+    }
+
     private function store($filename): Image
     {
         $fileDB = Image::create([
@@ -32,7 +40,7 @@ class CreateUser extends CreateRecord
     {
         try {
             DB::beginTransaction();
-            $ktp = $this->store($data['ktp_id']);
+            $ktp = StoreImages($data['ktp_id']);
 
 
             $record = static::getModel()::create([

@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('verifikasi_pembayaran', function (Blueprint $table) {
             $table->id();
             $table->string('pengirim');
             $table->string('room');
             $table->unsignedInteger('amount');
             $table->date("tanggal_dibayar");
-            $table->unsignedInteger("invoice_id");
+            $table->string("no_invoice");
+            $table->boolean("is_valid");
+            $table->unsignedInteger("bukti_file");
             $table->timestamps();
 
-            $table->foreign("invoice_id")->references("id")->on("invoice")->cascadeOnUpdate();
+            $table->foreign("bukti_file")->references("id")->on("images")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('verifikasi_pembayaran');
     }
 };

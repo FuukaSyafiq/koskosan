@@ -16,11 +16,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('available')->default(false);
-            $table->unsignedInteger('price')->default(0);
+            $table->unsignedInteger('tipe_room_id');
             $table->string('description');
-            $table->string('facility');
             $table->string('address');
-
+            $table->timestamps();
+        
+            $table->foreign('tipe_room_id')->references('id')->on('tipe_room')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

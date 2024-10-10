@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
 use App\Models\Room;
 use Illuminate\Http\Request;
 
@@ -9,10 +10,12 @@ class RoomController extends Controller
 {
     public function details($id) {
 
-        $data = Room::getRoomById($id);
+        $room = Room::getRoomById($id);
         // dd(json_encode($data));
+        $review = Review::getReviewsByRoomId($id);
+        $avgRating = Review::getAverageStarForRoom($id);
 
-        return view('room.room-details', ["id" => $id, "data" => $data]);
+        return view('room.room-details', ["id" => $id, "room" => $room, "review" => $review, "avgRating" => $avgRating]);
     }
 
     public function search(Request $request) {

@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateInvoiceVerification extends CreateRecord
 {
     protected static string $resource = InvoiceVerificationResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

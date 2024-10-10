@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\AnggotaKeluarga;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class InitSeeder extends Seeder
 {
@@ -13,6 +14,7 @@ class InitSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(TipeRoomSeeder::class);
         $this->call(RoomSeeder::class);
         $this->call(ImageSeeder::class);
         $this->call(RoleSeeder::class);
@@ -27,13 +29,16 @@ class InitSeeder extends Seeder
     public static function down()
     {
         ReviewSeeder::down();
-        UserSeeder::down();
         PermissionOwnerSeeder::down();
         PermissionPenyewaSeeder::down();
         PermissionNameSeeder::down();
-        RoleSeeder::down();
         ImageSeeder::down();
-        RoomSeeder::down();
-    }
+        RoleSeeder::down();
+        TipeRoomSeeder::down();
 
+        Storage::disk('public')->deleteDirectory('Image');
+        Storage::disk('public')->deleteDirectory('INVOICE');
+        Storage::disk('public')->deleteDirectory('KTP');
+        Storage::disk('public')->deleteDirectory('livewire-tmp');
+    }
 }

@@ -22,6 +22,7 @@ use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserResource extends Resource
 {
@@ -188,7 +189,21 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->requiresConfirmation()->color('danger')
+                        ->action(function (Collection $records) {
+                            foreach ($records as $record) {
+                                // Temukan gambar terkait berdasarkan tipe_room_id
+                                $image = Image::where('room_id', $record->id)->first();
+
+                                // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
+                                if ($image) {
+                                    DeleteImages($image->file_name);
+                                }
+
+                                // Hapus record dari tabel
+                                $record->delete();
+                            }
+                        }),
                 ]),
             ]);
     }
@@ -224,14 +239,14 @@ class UserResource extends Resource
                     ->label('contact'),
                 TextEntry::make('address')
                     ->label('Alamat'),
-                TextEntry::make('balance')
-                    ->label('Saldo'),
                 ImageEntry::make('ktp_id')
                     ->label('KTP')->getStateUsing(callback: function ($record) {
                         $image = Image::where('id', $record->ktp_id)->first();
                         // Debugging untuk melihat nilai yang didapat
                         return url($image->path) ?? null;
-                    }),
+                    })
+                    ->width('100')
+                    ->height('50'),
                 // ])
             ]);
     }

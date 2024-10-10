@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoomResource\Pages;
 use App\Filament\Resources\RoomResource\RelationManagers;
+use App\Models\Image;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Room;
@@ -14,13 +15,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -33,6 +30,7 @@ use Filament\Resources\Components\Tab;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Database\Eloquent\Collection;
 
 class RoomResource extends Resource
 {
@@ -43,26 +41,26 @@ class RoomResource extends Resource
   protected static ?string $navigationGroup = 'Room management';
 
   public static function canCreate(): bool
-    {
-        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
-    }
+  {
+    return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+  }
 
-    public static function canEdit(Model $record): bool
-    {
-        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
-    }
+  public static function canEdit(Model $record): bool
+  {
+    return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+  }
 
-    public static function canDelete(Model $record): bool
-    {
-        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
-    }
+  public static function canDelete(Model $record): bool
+  {
+    return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+  }
 
-    public static function canDeleteAny(): bool
-    {
-        return auth()->user()->role->id !==Role::getIdByRole('PENYEWA');
-    }
+  public static function canDeleteAny(): bool
+  {
+    return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+  }
 
-  
+
   public static function form(Form $form): Form
   {
     return $form
@@ -71,21 +69,39 @@ class RoomResource extends Resource
           ->schema([
             TextInput::make('name')
               ->label('nama ruang'),
+            Select::make('tipe_room_id')
+              ->label('Tipe Ruang')
+              ->relationship('tipe_room', 'tipe')
+              ->reactive()  // Makes the select reactive
+              ->afterStateUpdated(function (callable $set, $state) {
+                // Fetch the related tipe_room details when tipe_room_id is updated
+                $tipeRoom = \App\Models\TipeRoom::find($state);
+
+                if ($tipeRoom) {
+                  $set('price', $tipeRoom->price);
+                  $set('facility', $tipeRoom->facility);
+                } else {
+                  $set('price', null);
+                  $set('facility', null);
+                }
+              }),
             TextInput::make('price')
               ->label('Harga')
               ->prefix('Rp.')
+              ->readOnly(true)
               ->suffix('/Bulan'),
+            TextInput::make('facility')
+              ->readOnly(true)
+              ->label('fasilitas'),
             TextArea::make('description')
               ->label('deskripsi')
               ->autosize()
               ->maxLength(255),
-            TextInput::make('facility')
-              ->label('fasilitas'),
             TextInput::make('address')
               ->label('address'),
           ])
           ->columns(2),
-        Section::make('Foto ')
+        Section::make('Foto')
           ->schema([
             FileUpload::make('images')
               ->multiple()->directory("Image") // Enable multiple file uploads
@@ -103,6 +119,7 @@ class RoomResource extends Resource
 
   public static function table(Table $table): Table
   {
+    // $allRoomsAvailable = Room::where('available', false)->doesntExist();
 
     return $table
       ->columns([
@@ -115,18 +132,19 @@ class RoomResource extends Resource
           ->getStateUsing(function ($record) {
             // Fetch the rented_room record based on the room_id and get the user_id
             $rentedRoom = \App\Models\RentedRoom::where('room_id', $record->id)->first();
-            
+
             // If a rented_room is found, get the user's name from the user_id, otherwise return an empty string
-            return $rentedRoom ? \App\Models\User::find($rentedRoom->user_id)?->name ?? '' : '';
+            return $rentedRoom ? \App\Models\User::find($rentedRoom->user_id)?->name ?? '' : '-';
           }),
-        TextColumn::make('price')
+        TextColumn::make('tipe_room.tipe')
+          ->label('Tipe Kamar'),
+        TextColumn::make('tipe_room.price')
           ->label('Harga'),
-          // ->prefix('Rp.'),
+        TextColumn::make('tipe_room.facility')
+          ->label('fasilitas'),
         TextColumn::make('description')
           ->label('deskripsi')
           ->limit(50),
-        TextColumn::make('facility')
-          ->label('fasilitas'),
       ])
       ->filters([
         //
@@ -136,7 +154,21 @@ class RoomResource extends Resource
       ])
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
-          Tables\Actions\DeleteBulkAction::make(),
+          Tables\Actions\DeleteBulkAction::make()->requiresConfirmation()->color('danger')
+          ->action(function (Collection $records) {
+            foreach ($records as $record) {
+              // Temukan gambar terkait berdasarkan tipe_room_id
+              $image = Image::where('room_id', $record->id)->first();
+
+              // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
+              if ($image) {
+                DeleteImages($image->file_name);
+              }
+
+              // Hapus record dari tabel
+              $record->delete();
+            }
+          }),
         ]),
       ]);
   }

@@ -7,6 +7,7 @@ use App\Models\RentedRoom;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Room;
+use App\Models\Tagihan;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -76,7 +77,9 @@ class RentedRoomResource extends Resource
 
     {
         $currentRoomId = $record ? $record->room_id : null;
-        // print_r($currentRoomId);
+
+        // dd($record);
+
         return $form
             ->schema([
                 Select::make('room_id')
@@ -87,7 +90,6 @@ class RentedRoomResource extends Resource
                             ->where(function ($query) use ($get) {
                                 $currentRoomId = $get('room_id'); // Get the current room_id from the model state
                                 $query->where('available', true); // Only show available rooms
-
                                 // Always include the currently selected room, even if it's not available
                                 $query->orWhere('id', $currentRoomId);
                                 // dd($currentRoomId);
@@ -96,13 +98,10 @@ class RentedRoomResource extends Resource
                     ->required()
                     ->afterStateUpdated(function ($state, $set) use ($currentRoomId) {
                         // Ambil harga dari ruangan yang dipilih 
-                        $room = Room::find($state); // Mengambil ruangan berdasarkan ID
-                        // $currentRoomId = $record->room_id;
-                        // dd($currentRoomId);
-                        // dd($currentRoomId);
-                        if ($room) {
+                        $rooms = Room::find($state); // Mengambil ruangan berdasarkan ID
+                        if ($rooms) {
                             // Set harga ruangan jika ditemukan
-                            $set('price', $room->price); // Ganti 'price' dengan nama state yang sesuai
+                            $set('price', $rooms->price); // Ganti 'price' dengan nama state yang sesuai
                         } else {
                             // Jika ruangan tidak ditemukan, set harga menjadi null
                             $set('price', null); // Atau $set('price', 0);
@@ -116,16 +115,19 @@ class RentedRoomResource extends Resource
                         modifyQueryUsing: fn(Builder $query, $get) => $query
                             ->whereHas('role', fn($q) => $q->where('role', 'PENYEWA')) // Hanya pengguna dengan peran "PENYEWA"
                     )->required()->visible(fn($get) => auth()->user()->role_id === Role::getIdByRole("OWNER"))
-                    ->label('Penyewa')->disabled(fn($get) => $get('price') == null),
+                    ->label('Penyewa'),
                 DatePicker::make('rent_time')
                     ->label('Waktu Awal Sewa')
                     ->required()
+                    ->default(fn($record) => $record ? $record->rent_time : null)  // Use $record passed automatically
+                    // ->readOnly(fn($record) => $record && $record->rent_time !== null)
                     ->minDate(now())
             ]);
     }
 
     public static function table(Table $table): Table
     {
+
         return $table
             ->modifyQueryUsing(function ($query) {
                 if (auth()->user()->role_id == Role::getIdByRole("PENYEWA")) {

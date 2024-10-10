@@ -7,6 +7,7 @@ use App\Filament\Resources\TagihanResource\RelationManagers;
 use App\Models\RentedRoom;
 use App\Models\Role;
 use App\Models\Tagihan;
+use App\Models\Room;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -18,11 +19,15 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
+use Filament\Actions\CreateAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
 
 class TagihanResource extends Resource
 {
@@ -58,6 +63,9 @@ class TagihanResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $latestDueDate = Tagihan::latest('due_date')->value('due_date');
+        $minDate = Carbon::parse($latestDueDate)->addMonth();
+
         return $form
             ->schema([
                 Section::make()
@@ -72,9 +80,10 @@ class TagihanResource extends Resource
                             )
                             ->required()
                             ->reactive() // Make this field reactive to trigger changes
-                            ->afterStateUpdated(fn (callable $set, $state) => 
+                            ->afterStateUpdated(
+                                fn(callable $set, $state) =>
                                 // Fetch the price based on the selected room ID
-                                $set('amount', \App\Models\RentedRoom::find($state)?->room->price)
+                                $set('amount', RentedRoom::find($state)?->room->price)
                             ),
                         TextInput::make('amount')
                             ->label('Jumlah Tagihan')
@@ -86,12 +95,20 @@ class TagihanResource extends Resource
                         DatePicker::make('due_date')
                             ->label('Tanggal jatuh tempo')
                             ->required()
+                            ->reactive() // Make this field reactive
+                            ->minDate($minDate),
                     ])->columns(2)
             ]);
     }
 
     public static function table(Table $table): Table
     {
+        //Variable for filter section
+        $unavailableRoomCount = Room::where('available', false)->count();
+        $tennants =  User::where('role_id', Role::getIdByRole('PENYEWA'))
+        ->pluck('name', 'id')
+        ->toArray();
+
         return $table
             ->modifyQueryUsing(function ($query) {
                 if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
@@ -112,17 +129,43 @@ class TagihanResource extends Resource
                 BooleanColumn::make('is_settled')
                     ->label('Sudah dibayar'),
                 TextColumn::make('due_date')
-                    ->label('Tanggal terakhir bayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
+                    ->label('Tanggal jatuh Tempo')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
                 TextColumn::make('tanggal_dibayar')
                     ->label('Tanggal dibayar')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y')),
                 TextColumn::make('tanggal_notif')
                     ->label('Tanggal pemberitahuan')->formatStateUsing(fn($state) => Carbon::parse($state)->translatedFormat('d F Y'))
             ])
             ->filters([
-                //
+                SelectFilter::make('rented_room_id')
+                    ->relationship(
+                        name: 'rentedRoom',
+                        titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
+                        modifyQueryUsing: fn(Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
+                        ->where('rooms.available', false)
+                        )
+                        ->label('Kamar')
+                    ->visible(
+                        $unavailableRoomCount > 0
+                    ),
+                Filter::make('is_settled')
+                    ->query(fn (Builder $query): Builder => $query->where('is_settled', true))
+                    ->label('Sudah Dibayar'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Action::make('PayTagihan')
+                ->label('Bayar Tagihan')
+                ->url(fn (Tagihan $record): string => route(
+                    auth()->user()->role_id === Role::GetIdByRole('OWNER') 
+                        ? 'filament.owner.resources.payments.create' 
+                        : 'filament.penyewa.resources.payments.create', 
+                    [
+                        'rented_room_id' => $record->rented_room_id, // Pass the rented_room_id
+                        'amount' => $record->amount, // Pass the amount
+                        'due_date' => $record->due_date
+                    ]
+                ))
+                ->icon('heroicon-o-credit-card'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -146,4 +189,6 @@ class TagihanResource extends Resource
             'edit' => Pages\EditTagihan::route('/{record}/edit'),
         ];
     }
+
+    
 }

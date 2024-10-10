@@ -13,7 +13,10 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.5",
-        "spatie/laravel-image-optimizer": "^1.8"
+        "mailgun/mailgun-php": "^4.3",
+        "spatie/laravel-image-optimizer": "^1.8",
+        "symfony/http-client": "^7.1",
+        "symfony/mailgun-mailer": "^7.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -31,8 +34,10 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/CalculateRating.php",
-            "app/Helpers/GenerateInvoiceNumber.php"
+            "app/Helpers/SendToWhatsapp.php",
+            "app/Helpers/GenerateInvoiceNumber.php",
+            "app/Helpers/StoreImages.php",
+            "app/Helpers/DeleteImages.php"
         ]
     },
     "autoload-dev": {
@@ -69,7 +74,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "stable",

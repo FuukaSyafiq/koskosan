@@ -7,9 +7,11 @@ use App\Models\RentedRoom;
 use Filament\Actions;
 use App\Models\Room;
 use App\Models\Tagihan;
+use App\Models\User;
 use Carbon\Carbon;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class EditRentedRoom extends EditRecord
@@ -38,79 +40,72 @@ class EditRentedRoom extends EditRecord
     }
 
 
-    protected function handleRecordDeletion(Model $record): void {
+    // protected function handleRecordDeletion(Model $record): void
+    // {
 
-        dd($record);
-         $record->delete();
-    }
+    //     dd($record);
+    //     $record->delete();
+    // }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        // Menampilkan data untuk debugging
-        $currentRoomId = $this->currentRoom;
 
-        $rentedRoomNow = RentedRoom::where('id', $currentRoomId)->first();
+        try {
+            DB::beginTransaction();
+            $currentRoomId = $this->currentRoom;
 
-        // Mendapatkan kamar yang saat ini disewa
-        $room = Room::where('id', $rentedRoomNow->room_id)->first();
-        // dd($room);
+            $rentedRoomNow = RentedRoom::where('id', $currentRoomId)->first();
 
-        // Jika user_id disediakan dalam data
-        if (isset($data['user_id'])) {
-            RentedRoom::where('id', $record->id)->update(["user_id" => $data['user_id']]);
+            // Mendapatkan kamar yang saat ini disewa
+            $room = Room::where('id', $rentedRoomNow->room_id)->first();
+            // dd($room);
+
+            // Jika user_id disediakan dalam data
+            if (isset($data['user_id'])) {
+                RentedRoom::where('id', $record->id)->update(["user_id" => $data['user_id']]);
+            }
+
+            // Jika room_id disediakan dalam data
+            if (isset($data['room_id'])) {
+                // Mengupdate kamar yang sedang digunakan menjadi tersedia
+                Room::where('id', $room->id)->update(['available' => true]);
+
+                // Mengupdate kamar baru menjadi tidak tersedia   
+                $roomYangDiganti = Room::where('id', $data['room_id'])->first();
+                Room::where('id', $data['room_id'])->update(['available' => false]);
+
+                // Memperbarui room_id di tabel RentedRoom    
+                $rentedRoom = RentedRoom::where('id', $record->id)->first();
+                // dd($rentedRoom->id);
+                RentedRoom::where('id', $rentedRoom->id)->update(["room_id" => $data['room_id']]);
+
+                Tagihan::where('rented_room_id', $rentedRoom->id)->update([
+                    "amount" => $roomYangDiganti->price
+                ]);
+            }
+
+            // Jika rent_time disediakan dalam data
+            if (isset($data['rent_time'])) {
+                $rentedRoom = RentedRoom::where('id', $record->id)->first();
+                $apakahTagihanPernahDibayar = Tagihan::where('rented_room_id', $rentedRoom->id)->where('is_settled', true)->first();
+                if (!$apakahTagihanPernahDibayar) {
+                    RentedRoom::where('id', $record->id)->update(["rent_time" => $data['rent_time']]);
+                    Tagihan::where('rented_room_id', $record->id)->update([
+                        "due_date" => Carbon::parse($data['rent_time']),
+                        "tanggal_notif" => Carbon::parse($data['rent_time'])
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return $record;
+        } catch (\Exception $e) {
+            // dd($e);
+            Log::info($e->getMessage());
+            DB::rollBack();
+
+            return $record;
         }
-
-        // Jika room_id disediakan dalam data
-        if (isset($data['room_id'])) {
-            // Mengupdate kamar yang sedang digunakan menjadi tersedia
-            $isSuccess = Room::where('id', $room->id)->update(['available' => true]);
-
-            // Mengupdate kamar baru menjadi tidak tersedia
-            Room::where('id', $data['room_id'])->update(['available' => false]);
-
-            // Memperbarui room_id di tabel RentedRoom
-            RentedRoom::where('id', $record->id)->update(["room_id" => $data['room_id']]);
-        }
-
-        // Jika rent_time disediakan dalam data
-        if (isset($data['rent_time'])) {
-            RentedRoom::where('id', $record->id)->update(["rent_time" => $data['rent_time']]);
-            Tagihan::where('rented_room_id', $record->id)->update([
-                "due_date" => Carbon::parse($data['rent_time']),
-                "tanggal_notif" => Carbon::parse($data['rent_time'])
-            ]);
-        }
-
-        $record->update($data);
-
-        return $record;
     }
-
-    // protected function handleRecordUpdate(Model $record, array $data): Model
-    // {
-    //     print_r(json_encode($record));
-    //     print_r(json_encode($data));
-    //     dd();
-
-    //     $room = Room::where('id', $record->room_id)->first();
-
-    //     if (isset($data['user_id'])) {
-    //         RentedRoom::where('id', $record->id)->update(["user_id" => $data['user_id']]);
-    //     }
-
-    //     if (isset($data['room_id'])) {
-    //         Room::where('id', $room->id)->update(['available' => true]);
-    //         Room::where('id', $data['room_id'])->update(['available' => false]);
-    //         RentedRoom::where('id', $record->id)->update(["room_id" => $data['room_id']]);
-    //     }
-
-    //     if (isset($data['rent_time'])) {
-    //         RentedRoom::where('id', $record->id)->update(["rent_time" => $data['rent_time']]);
-    //         Tagihan::where('rented_room_id', $record->id)->update([
-    //             "due_date" => Carbon::parse($data['rent_time']),
-    //         ]);
-    //     }
-
-    //     return $record;
-    // }
 }

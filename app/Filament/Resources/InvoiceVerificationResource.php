@@ -4,20 +4,54 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceVerificationResource\Pages;
 use App\Filament\Resources\InvoiceVerificationResource\RelationManagers;
-use App\Models\InvoiceVerification;
+use App\Models\VerifikasiPembayaran;
+use App\Models\Image;
+use App\Models\RentedRoom;
+use App\Models\Role;
+use App\Models\Room;
+use App\Models\Tagihan;
+use App\Models\Transaction;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class InvoiceVerificationResource extends Resource
 {
-    protected static ?string $model = InvoiceVerification::class;
+    protected static ?string $model = VerifikasiPembayaran::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Financial Transactions';
+    protected static ?string $navigationLabel = 'Verifikasi Pembayaran';
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
@@ -30,14 +64,75 @@ class InvoiceVerificationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                if (auth()->user()->role_id == Role::getIdByRole("PENYEWA")) {
+                    $invoice = $query->where('pengirim', auth()->user()->name)->where('is_valid', false);
+                    return $invoice;
+                }
+                return $query->where('is_valid', false);
+            })
             ->columns([
-                //
+                TextColumn::make('pengirim')
+                    ->label('Pengirim'),
+                TextColumn::make('room')
+                    ->label('Kamar'),
+                TextColumn::make('amount')
+                ->formatStateUsing(fn($state) =>"Rp ". number_format($state, 0, ',', '.'))
+                    ->label('Amount'),
+                TextColumn::make('tanggal_dibayar')
+                    ->label('Tanggal dibayar'),
+                TextColumn::make('no_invoice')
+                    ->label('Nomor Invoice'),
+                BooleanColumn::make('is_valid')
+                    ->label('Terverifikasi'),
+                // ImageColumn::make('invoice_file')
+                //     ->label('Bukti Pembayaran')
+                //     ->getStateUsing(callback: function ($record) {
+                //         // dd($record->id);
+                //         $image = Image::where('id', $record->invoice_file)->first();
+                //         // Debugging untuk melihat nilai yang didapat
+                //         return url($image->path) ?? null;
+                //     }),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                action::make('verifyInvoice')
+                    ->label('Verifikasi')
+                    ->action(function (VerifikasiPembayaran $record) {
+                        // Update the 'is_verified' field in register table
+                        $room = Room::where('name', $record->room)->first();
+                        $rentedRoom = RentedRoom::where('room_id', $room->id)->first();
+
+                        Tagihan::where('rented_room_id', $rentedRoom->id)->update([
+                            "is_settled" => true,
+                            "tanggal_dibayar" => $record->tanggal_dibayar
+                        ]);
+
+                        $record->update([
+                            'is_valid' => true,
+                        ]);
+
+                        $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
+
+                        Tagihan::create([
+                            "amount" => $record->amount,
+                            "rented_room_id" => $rentedRoom->id,
+                            "is_settled" => false,
+                            "tanggal_dibayar" => null,
+                            "due_date" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(30),  // 30 days after current due_date
+                            "tanggal_notif" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
+                        ]);
+                    })
+                    ->requiresConfirmation()
+                    ->color('success')
+                    ->icon('heroicon-o-check')
+                    ->visible(function (VerifikasiPembayaran $record) {
+                        // only show the verify button if the user is not verified
+                        return !$record->is_valid && auth()->user()->role_id === Role::getIdByRole("OWNER");
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

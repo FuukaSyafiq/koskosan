@@ -9,22 +9,15 @@ use Illuminate\Support\Facades\DB;
 class Room extends Model
 {
     use HasFactory;
-    public $timestamps = false;
 
     protected $table = "rooms";
 
-    // public static function getIdByNameAndKosName($roomName, $kosName)
-    // {
-    //     $idKos = Kos::getKosIdByName($kosName);
-    //     return self::where('name', $roomName)->where('kos_id', $idKos)->first()->id;
-    // }
+    protected $fillable = ['name', 'available', 'description', 'address', 'tipe_room_id'];
 
-    protected $fillable = ['name', 'available', 'price', 'description', 'facility', 'address'];
-
-    // public function kos()
-    // {
-    //     return $this->belongsTo(Kos::class);
-    // }
+    public function tipe_room()
+    {
+        return $this->belongsTo(TipeRoom::class, 'tipe_room_id');
+    }
 
     public function reviews()
     {
@@ -36,29 +29,52 @@ class Room extends Model
         return $this->hasMany(RentedRoom::class);
     }
 
+    public static function getRandomRoomIdByTipeRoom($tipe)
+    {
+        $tipeRoomId = TipeRoom::getIdByTipeRoom($tipe);
+        return self::where('tipe_room_id', $tipeRoomId)->inRandomOrder()->first()->id;
+    }
+
     public static function getRoomById($id)
     {
-
         return self::select(
-            'rooms.name as room_name',
-            'rooms.price',
             'rooms.id',
+            'rooms.address',
+            'rooms.name',
             'rooms.description',
-            DB::raw('DISTINCT images.path'),
-            'images.file_name',
             'rooms.facility',
-            DB::raw('AVG(reviews.star) as avg_star'),
-            'reviews.user_id',
-            'users.name',
-            'reviews.review',
-            'reviews.created_at'
+            'rooms.price',
+            'images.path'
         )
-            ->leftJoin('images', 'images.room_id', '=', 'rooms.id')
-            ->leftJoin('reviews', 'reviews.room_id', "=", "rooms.id")
-            ->leftJoin('users', 'reviews.user_id', '=', 'users.id')
+            ->distinct() // Menambahkan DISTINCT untuk hasil unik
+            ->join('images', 'images.room_id', '=', 'rooms.id')
             ->where('rooms.id', $id)
             ->get();
     }
+    public static function getAvailableRooms()
+    {
+        return self::select(
+            'rooms.id',
+            'rooms.address',
+            'rooms.name',
+            'rooms.description',
+            'rooms.facility',
+            'rooms.price',
+            'rooms.available',
+            DB::raw('MIN(images.path) as path')
+        )
+            ->join('images', 'images.room_id', '=', 'rooms.id')
+            ->groupBy(
+                'rooms.id',
+                'rooms.address',
+                'rooms.name',
+                'rooms.description',
+                'rooms.facility',
+                'rooms.price'
+            )
+            ->get();
+    }
+
 
     public static function getIdByRoomName($roomName)
     {
@@ -78,27 +94,8 @@ class Room extends Model
             ->get();
     }
 
-
-    public static function getAvailableRooms()
-    {
-
-        return self::select(
-            'rooms.name as room_name',
-            'rooms.price',
-            'rooms.id',
-            'images.path',
-            'images.file_name',
-            'reviews.star'
-        )
-            ->join('images', 'images.room_id', '=', 'rooms.id')
-            ->join('reviews', 'reviews.room_id', "=", "rooms.id")
-            ->where('rooms.available', true)
-            ->get();
-    }
-
     public function Image()
     {
         return $this->belongsTo('');
     }
-
 }

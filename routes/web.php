@@ -5,6 +5,7 @@ use App\Http\Controllers\KosController;
 use App\Http\Controllers\PermissionAdmin;
 use App\Http\Controllers\PermissionManager;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ListRoomController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\View\Components\Denah;
@@ -28,7 +29,8 @@ use Illuminate\Support\Facades\Route;
 //
 Route::get('/', [IndexController::class, 'gets'])->name('index');
 Route::post('/', [IndexController::class, 'store']);
-// Route::get('/room', [RoomController::class, 'search']);
+Route::get('/roomlist', [ListRoomController::class, 'gets']);
+Route::post('/roomlist', [ListRoomController::class, 'store']);
 Route::get('/room/{id}', [RoomController::class, 'details']);
 Route::get('/denah', [Denah::class, 'render']);
 

@@ -19,6 +19,7 @@ class Image extends Model
         'mime_type',
         'path',
         'room_id',
+        'tipe_room_id',
         'size',
         'is_vr'
     ];

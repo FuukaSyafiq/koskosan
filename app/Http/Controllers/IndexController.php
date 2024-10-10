@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Room;
+use App\Models\TipeRoom;
+use Illuminate\Support\Facades\Mail;
 
 class IndexController extends Controller
 {
     public function gets()
     {
-        
-        // $datas = Room::getAvailableRooms();
+    //  Mail::to("syafiqpinginfullstack@gmail.com")->send();   
+        // $rooms = Room::getAvailableRooms();
+        $rooms = TipeRoom::getAllTipeRooms();
 
-        return view('index', ['user' => auth()->user()]);
+        // dd($rooms);
+        return view('index', ['user' => auth()->user(), 'rooms' => $rooms]);
     }
     public function store(Request $request) {
         dd($request);

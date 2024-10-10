@@ -16,4 +16,12 @@ class ListTagihans extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    public $unavailableRoomCount;
+
+    public function mount():void
+    {
+        // Calculate the unavailable rooms count
+        $this->unavailableRoomCount = \App\Models\Room::where('available', false)->count();
+    }
 }

@@ -1,12 +1,13 @@
 <?php
 
-use App\Models\Transaction;
+// use App\Models\Transaction;
+use App\Models\VerifikasiPembayaran;
 use Carbon\Carbon;
 
 function GenerateInvoiceNumber()
 {
 	// Ambil nomor terakhir dari database
-	$lastInvoice = Transaction::orderBy('id', 'desc')->first();
+	$lastInvoice = VerifikasiPembayaran::orderBy('id', 'desc')->first();
 
 	if ($lastInvoice) {
 		$lastInvoiceNumber = intval(substr($lastInvoice->no_invoice, 4, 4)); // Ambil angka dari no_invoice (misal 'INV-0001' -> 0001)

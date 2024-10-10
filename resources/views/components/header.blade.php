@@ -36,18 +36,26 @@
         <a href="{{ route('index') }}" class="flex w-1/5 items-center">
             <span class="self-center text-2xl text-lime-600 font-semibold whitespace-nowrap ml-1">KosLoka</span>
         </a>
-        
+
         {{-- sidebar for responsive (Phone screen) --}}
         <x-header-sidebar />
 
         <div class="hidden w-4/5 md:flex  justify-end items-center" id="navbar-default">
             <ul
                 class="mr-1 font-medium justify-end w-full items-center flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg  md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <li>
+                    <a href="{{ url('/roomlist') }}">
+                        <button id="dropdownDefaultButton"
+                        class="text-white bg-lime-400 hover:bg-lime-500  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+                        type="button">List kamar
+                        </button>
+                    </a>
+                </li>
                 @if ($user)
                     @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))
                         <li>
                             <a href="{{ url('/penyewa') }}"
-                                class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 text-black"
+                                class="text-white bg-lime-400 hover:bg-lime-500  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
                                 aria-current="page">Kamar Anda</a>
                         </li>
                     @endif
@@ -55,7 +63,7 @@
                     @if ($user->role_id == \App\Models\Role::getIdByRole('OWNER'))
                         <li>
                             <a href="{{ url('/owner') }}"
-                                class="block mt-2 px-3 font-bold bg-slate-700 rounded md:bg-transparent  md:p-0 dark:text-white md:dark:text-slate-500"
+                                class="text-white bg-lime-400 hover:bg-lime-500  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
                                 aria-current="page">Kelola KOS</a>
                         </li>
                     @endif

@@ -14,26 +14,13 @@ class CreateRoom extends CreateRecord
 {
     protected static string $resource = RoomResource::class;
 
-    private function store($filename, $roomId = null, $isVr = false): Image
+    protected function getFormActions(): array
     {
-        $fileDB = Image::create([
-            'file_name' => $filename,
-            'mime_type' => null,
-            'path' => '/storage' . '/' . $filename,
-            'size' => null,
-            "room_id" => $roomId,
-            "is_vr" => $isVr
-        ]);
-        return $fileDB;
+        return [
+            $this->getCreateFormAction()->label('Buat'),
+            $this->getCancelFormAction()->label('Batal'),
+        ];
     }
-
-    // protected function mutateFormDataBeforeCreate(array $data): array
-    // {
-    //     //otomatis 'available true karena room yang baru diinput ibu kos pasti tersedia'
-    //     $data['available'] = true;
-    //     $data['address'] = "KosLoka Ibu Qosim";
-    //     return $data;
-    // }
 
 
     public function handleRecordCreation(array $data): Model
@@ -44,25 +31,28 @@ class CreateRoom extends CreateRecord
             $record = static::getModel()::create([
                 "name" => $data['name'],
                 "available" => true,
-                "price" => $data['price'],
                 "description" => $data['description'],
-                "facility" => $data['facility'],
-                "address" => $data['address']
+                "address" => $data['address'],
+                "tipe_room_id" => $data['tipe_room_id']
             ]);
 
             foreach ($data['images'] as $image) {
-                $this->store($image, $record->id);
+                StoreImages($image, $record->id);
             }
 
             if (isset($data['vr_files'])) {
-                $this->store($data['vr_files'], $record->id, true);
+                StoreImages($data['vr_files'], $record->id, null, true);
             }
 
             DB::commit();
 
             return $record;
         } catch (\Exception $e) {
-            // Rollback the transaction on error
+            // Rollback the transaction on error 
+            foreach ($data['images'] as $image) {
+                DeleteImages($image);
+            }
+
             DB::rollBack();
 
             // Log the error message

@@ -33,7 +33,8 @@ class ImageController extends Controller
                 'path' => '/storage/' . $path,  // Menghapus double slash
                 'size' => $file->getSize(),
                 "is_vr" => false,
-                "room_id" => null
+                "room_id" => null,
+                "tipe_room_id" => null
             ]);
 
             return $fileDB;  // Mengembalikan object Image yang baru disimpan

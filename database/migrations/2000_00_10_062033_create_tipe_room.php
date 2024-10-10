@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice', function (Blueprint $table) {
+        Schema::create('tipe_room', function (Blueprint $table) {
             $table->id();
-            $table->string("no_invoice");
-            $table->unsignedInteger("invoice_file");
-            $table->timestamps();
-
-            $table->foreign("invoice_file")->references("id")->on("images")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('tipe')->unique();
+            $table->string('facility');
+            $table->string('ukuran')->nullable();
+            $table->unsignedInteger('price');
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice');
+        Schema::dropIfExists('tipe_room');
     }
 };

@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterRequest $request)
     {
+        // dd($request);
 
         $ktp = (new ImageController())->store($request, "ktp");
 
@@ -50,7 +51,6 @@ class RegisteredUserController extends Controller
             "email" => $request->email,
             "role_id" => Role::getIdByRole("PENYEWA"),
             "contact" => $request->contact,
-            "balance" => 0,
             "address" => $request->address,
             "ktp_id" => $ktp->id,
             "password" => Hash::make($request->password)
@@ -58,6 +58,6 @@ class RegisteredUserController extends Controller
 
 
 
-        return redirect()->to('/');
+        return redirect()->to('/login');
     }
 }

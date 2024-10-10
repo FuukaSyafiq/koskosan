@@ -13,6 +13,11 @@
 <!-- Dropdown menu -->
 <div id="dropdownDots"
     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+    <li>
+        <a href="{{ url('/roomlist') }}"
+            class="block m-auto p-3 font-bold b hover:bg-slate-700 g-slate-700 rounded md:bg-transparent  md:p-0 hover:text-white text-black"
+            aria-current="page">List Kamar</a>
+    </li>
     @if ($user)
         @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))
             <li>
@@ -32,8 +37,7 @@
         <li>
             <form action="{{ route('logout') }}" method="post">
                 @csrf
-                <a href="{{ route('logout') }}"
-                    class="block m-auto p-3 font-bold b hover:bg-slate-700 g-slate-700 rounded md:bg-transparent  md:p-0 hover:text-white text-black"
+                <a href="{{ route('logout') }}" class="text-black text-center px-4 py-2"
                     onclick="event.preventDefault();                                                                                                                                         this.closest('form').submit();">
                     Logout
                 </a>

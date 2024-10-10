@@ -11,6 +11,7 @@ use Filament\Resources\Pages\EditRecord;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class EditUser extends EditRecord
 {
@@ -37,15 +38,21 @@ class EditUser extends EditRecord
     {
         try {
 
+            DB::beginTransaction();
             if (isset($data['ktp_id'])) {
-                DB::beginTransaction();
-                $ktp = $this->store($data['ktp_id']);
+                $user = User::where('email', $record->email)->first();
+                $previousImage = Image::where('id', $user->ktp_id)->first();
+                // $ktp = $this->store($data['ktp_id']);
+                $ktp =  StoreImages($data['ktp_id']);
 
                 User::where('email', $record->email)->update(['ktp_id' => $ktp->id]);
-                DB::commit();
+
+                DeleteImages($previousImage->file_name);
             }
 
             $record->update($data);
+            DB::commit();
+
             return $record;
         } catch (\Exception $e) {
             // Rollback the transaction on error

@@ -12,14 +12,16 @@ return new class extends Migration {
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('file_name');
+            $table->string('file_name')->unique();
             $table->string('mime_type')->nullable();
-            $table->string('path');
+            $table->string('path')->unique();
             $table->unsignedInteger('size')->nullable();
             $table->unsignedInteger('room_id')->nullable();
+            $table->unsignedInteger('tipe_room_id')->nullable();
             $table->boolean("is_vr")->nullable()->default(false);
 
             $table->foreign('room_id')->references('id')->on('rooms')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('tipe_room_id')->references('id')->on('tipe_room')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
