@@ -37,6 +37,7 @@
             "app/Helpers/SendToWhatsapp.php",
             "app/Helpers/GenerateInvoiceNumber.php",
             "app/Helpers/StoreImages.php",
+            "app/Helpers/GenerateMessage.php",
             "app/Helpers/DeleteImages.php"
         ]
     },

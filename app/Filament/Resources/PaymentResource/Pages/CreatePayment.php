@@ -17,6 +17,7 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Pages\Actions\Action;
+use GenerateMessage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -28,17 +29,6 @@ class CreatePayment extends CreateRecord
     protected function getRedirectUrl(): string
     {
         return \App\Filament\Resources\TagihanResource::getUrl('index');
-    }
-
-    private function store($filename): Image
-    {
-        $fileDB = Image::create([
-            'file_name' => $filename,
-            'mime_type' => null,
-            'path' => '/storage' . '/' . $filename,
-            'size' => null,
-        ]);
-        return $fileDB;
     }
 
     public  function getBreadcrumb(): string
@@ -61,33 +51,36 @@ class CreatePayment extends CreateRecord
             $roomYangDisewa = Room::where('name', $data['room'])->first();
             $rentedRoom = RentedRoom::where('room_id', $roomYangDisewa->id)->where('user_id', $user->id)->first();
 
-            if ($user->role_id === Role::getIdByRole('OWNER')) {
+            $tagihanYangAkanDibayar = Tagihan::where('rented_room_id', $rentedRoom->id)->where('is_settled', false)->where('due_date', $data['due_date'])->first();
 
 
-                // $roomYangDisewa = Room::where('id', $rentedRoom->room_id)->first();
+            // dd($tagihanYangAkanDibayar);
+            if (auth()->user()->role_id === Role::getIdByRole('OWNER')) {
+                $tagihanYangAkanDibayar->is_settled = true;
+                $tagihanYangAkanDibayar->tanggal_dibayar = Carbon::now('utc');
 
-                Tagihan::where('rented_room_id', $rentedRoom->id)->where('is_settled', false)->where('id', $data['due_date'])
-                    ->update([
-                        "is_settled" => true,
-                        "tanggal_dibayar" => $data['tanggal_dibayar']
-                    ]);
+                $tagihanYangAkanDibayar->save();
+
+                $message = GenerateMessage::whenCreatePayment(Carbon::parse($tagihanYangAkanDibayar->due_date), $roomYangDisewa->name);
+                dd($message);
+                SendToWhatsapp($user->contact, $message);
 
                 $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
 
 
-                Tagihan::create([
+                $tagihanMendatang = Tagihan::create([
                     "amount" => $data['tagihan'],
                     "rented_room_id" => $rentedRoom->id,
                     "is_settled" => false,
-                    "tanggal_dibayar" => null,
                     "due_date" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(30),  // 30 days after current due_date
                     "tanggal_notif" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
                 ]);
 
+                // dd($tagihanMendatang);
+
                 $noInvoice = GenerateInvoiceNumber();
 
                 $buktiPembayaran = StoreImages($data['invoice_file']);
-                // $invoiceFile = $this->store($data['invoice_file']);
 
                 VerifikasiPembayaran::create([
                     "is_valid" => true,
@@ -98,6 +91,7 @@ class CreatePayment extends CreateRecord
                     "no_invoice" => $noInvoice,
                     "bukti_file" => $buktiPembayaran->id
                 ]);
+
 
                 DB::commit();
                 return $user;
@@ -119,13 +113,15 @@ class CreatePayment extends CreateRecord
                 "bukti_file" => $buktiFile->id
             ]);
 
+            // $message = GenerateMessage::whenCreatePayment(Carbon::parse($tagihanYangAkanDibayar->due_date), $roomYangDisewa->name);
+            // SendToWhatsapp($user->contact, $message);
+
 
             DB::commit();
             return $user;
         } catch (\Exception $e) {
-            DeleteImages($data['invoice_file']);
             DB::rollBack();
-
+            DeleteImages($data['invoice_file']);
 
             throw $e;
         }

@@ -29,6 +29,11 @@ class TransactionResource extends Resource
 
     protected static ?string $navigationGroup = 'Financial Transactions';
 
+    public static function getBreadcrumb(): string
+    {
+        return '';
+    }
+
     public static function canCreate(): bool
     {
         return false;
@@ -62,7 +67,7 @@ class TransactionResource extends Resource
     {
         return $table->modifyQueryUsing(function ($query) {
             if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
-                return $query->where('pengirim', auth()->user()->name)->first();
+                return $query->where('pengirim', auth()->user()->name)->where('is_valid', true);
             }
             return $query;
         })

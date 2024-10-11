@@ -1,29 +1,22 @@
 <?php
 
+
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ImageController;
-use App\Models\Kecamatan;
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Agama;
 use Illuminate\View\View;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\GolonganDarah;
-use App\Models\KartuKeluarga;
-use Illuminate\Validation\Rules;
+
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\FilesController;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Auth\Events\Registered;
-use App\Providers\RouteServiceProvider;
+
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\DataPendaftar;
-use App\Models\Kelurahan;
-use App\Models\Files;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RegisteredUserController extends Controller
 {
@@ -43,21 +36,27 @@ class RegisteredUserController extends Controller
     public function store(RegisterRequest $request)
     {
         // dd($request);
-
+        DB::beginTransaction();
         $ktp = (new ImageController())->store($request, "ktp");
+        try {
 
-        User::create([
-            "name" => $request->name,
-            "email" => $request->email,
-            "role_id" => Role::getIdByRole("PENYEWA"),
-            "contact" => $request->contact,
-            "address" => $request->address,
-            "ktp_id" => $ktp->id,
-            "password" => Hash::make($request->password)
-        ]);
+            User::create([
+                "name" => $request->name,
+                "email" => $request->email,
+                "role_id" => Role::getIdByRole("PENYEWA"),
+                "contact" => $request->contact,
+                "address" => $request->address,
+                "ktp_id" => $ktp->id,
+                "password" => Hash::make($request->password)
+            ]);
 
+            DB::commit();
 
-
-        return redirect()->to('/login');
+            return redirect()->to('/login');
+        } catch (\Exception $exception) {
+            DeleteFromStorage($ktp->file_name);
+            DB::rollBack();
+          throw $exception;
+        }
     }
 }

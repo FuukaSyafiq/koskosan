@@ -7,6 +7,7 @@ use App\Filament\Resources\NotificationResource\RelationManagers;
 use App\Models\Notification;
 use App\Models\RentedRoom;
 use App\Models\Role;
+use App\Models\Room;
 use App\Models\Tagihan;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,9 +21,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Action;
+use GenerateMessage;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class NotificationResource extends Resource
 {
@@ -109,8 +112,10 @@ class NotificationResource extends Resource
                     ->label('Notify User')
                     ->action(function (Model $record) {
                         $roomYangDisewa = RentedRoom::where('id', $record->rented_room_id)->first();
+                        $room = Room::where('id', $roomYangDisewa->room_id)->first();
                         $user = User::where('id', $roomYangDisewa->user_id)->first();
-                        SendToWhatsapp($user->contact);
+                        $message = GenerateMessage::whenAlmostDueDate($room->name);
+                        SendToWhatsapp($user->contact, $message);
                     })
                     ->requiresConfirmation()
                     ->color('warning')
@@ -124,11 +129,19 @@ class NotificationResource extends Resource
                         ->requiresConfirmation()
                         ->color('warning')
                         ->action(function (Collection $records) {
-                            foreach ($records as $record) {
-                                $roomYangDisewa = RentedRoom::where('id', $record->rented_room_id)->first();
-                                $user = User::where('id', $roomYangDisewa->user_id)->first();
-                                SendToWhatsapp($user->contact);
-                                // dd($user->email);
+                            DB::beginTransaction();
+                            try {
+                                foreach ($records as $record) {
+                                    $roomYangDisewa = RentedRoom::where('id', $record->rented_room_id)->first();
+                                    $tagihan = Tagihan::where('rented_room_id', $roomYangDisewa->id)->first();
+                                    $room = Room::where('id', $roomYangDisewa->room_id)->first();
+                                    $user = User::where('id', $roomYangDisewa->user_id)->first();
+
+                                   
+                                }
+                            } catch (\Exception $e) {
+                                DB::rollBack();
+                                throw $e;
                             }
                         }),
                 ]),

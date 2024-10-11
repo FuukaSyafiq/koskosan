@@ -15,22 +15,22 @@ class TipeRoomSeeder extends Seeder
     {
         $datas = [
             [
-                "tipe" => "FULL AC",
-                "facility" => "Dapur,Double bed,Lemari, Single bed, TV, AC 3",
-                "ukuran" => "4x4",
-                "price" => 1000000
+                "tipe" => "Ekonomis",
+                "facility" => "Lemari, Single bed, TV",
+                "ukuran" => "3x3",
+                "price" => 70000
             ],
             [
-                "tipe" => "1 AC",
-                "facility" => "Dapur,Double bed,Lemari,Single bed,TV, 1 AC",
-                "ukuran" => "4x4",
-                "price" => 1000000
+                "tipe" => "Standard",
+                "facility" => "Lemari, Single bed, TV, Dapur, AC",
+                "ukuran" => "4x5",
+                "price" => 120000
             ],
             [
-                "tipe" => "NO AC",
-                "facility" => "Dapur, Lemari, Single bed, TV",
-                "ukuran" => "4x4",
-                "price" => 1000000
+                "tipe" => "Lengkap",
+                "facility" => "Lemari, Single bed, TV, Dapur, AC, Meja Belajar, Kulkas",
+                "ukuran" => "5x6",
+                "price" => 200000
             ]
         ];
 

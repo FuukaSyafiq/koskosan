@@ -83,7 +83,7 @@ class TagihanResource extends Resource
                             ->afterStateUpdated(
                                 fn(callable $set, $state) =>
                                 // Fetch the price based on the selected room ID
-                                $set('amount', RentedRoom::find($state)?->room->price)
+                                $set('amount', RentedRoom::find($state)?->room->tipe_room?->price)
                             ),
                         TextInput::make('amount')
                             ->label('Jumlah Tagihan')
@@ -92,11 +92,11 @@ class TagihanResource extends Resource
                             ->reactive()
                             ->default(fn($get) => $get('amount'))
                             ->readOnly(true),
-                        DatePicker::make('due_date')
-                            ->label('Tanggal jatuh tempo')
-                            ->required()
-                            ->reactive() // Make this field reactive
-                            ->minDate($minDate),
+                        // DatePicker::make('due_date')
+                        //     ->label('Tanggal jatuh tempo')
+                        //     ->required()
+                        //     ->reactive() // Make this field reactive
+                        //     ->minDate($minDate),
                     ])->columns(2)
             ]);
     }
@@ -105,9 +105,9 @@ class TagihanResource extends Resource
     {
         //Variable for filter section
         $unavailableRoomCount = Room::where('available', false)->count();
-        $tennants =  User::where('role_id', Role::getIdByRole('PENYEWA'))
-        ->pluck('name', 'id')
-        ->toArray();
+        // $tennants =  User::where('role_id', Role::getIdByRole('PENYEWA'))
+        //     ->pluck('name', 'id')
+        //     ->toArray();
 
         return $table
             ->modifyQueryUsing(function ($query) {
@@ -141,31 +141,31 @@ class TagihanResource extends Resource
                         name: 'rentedRoom',
                         titleAttribute: 'rooms.name', // Access the room name through the rentedRoom relationship
                         modifyQueryUsing: fn(Builder $query) => $query->join('rooms', 'rented_rooms.room_id', '=', 'rooms.id')
-                        ->where('rooms.available', false)
-                        )
-                        ->label('Kamar')
+                            ->where('rooms.available', false)
+                    )
+                    ->label('Kamar')
                     ->visible(
                         $unavailableRoomCount > 0
                     ),
                 Filter::make('is_settled')
-                    ->query(fn (Builder $query): Builder => $query->where('is_settled', true))
+                    ->query(fn(Builder $query): Builder => $query->where('is_settled', true))
                     ->label('Sudah Dibayar'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Action::make('PayTagihan')
-                ->label('Bayar Tagihan')
-                ->url(fn (Tagihan $record): string => route(
-                    auth()->user()->role_id === Role::GetIdByRole('OWNER') 
-                        ? 'filament.owner.resources.payments.create' 
-                        : 'filament.penyewa.resources.payments.create', 
-                    [
-                        'rented_room_id' => $record->rented_room_id, // Pass the rented_room_id
-                        'amount' => $record->amount, // Pass the amount
-                        'due_date' => $record->due_date
-                    ]
-                ))
-                ->icon('heroicon-o-credit-card'),
+                    ->label('Bayar Tagihan')
+                    ->url(fn(Tagihan $record): string => route(
+                        auth()->user()->role_id === Role::GetIdByRole('OWNER')
+                            ? 'filament.owner.resources.payments.create'
+                            : 'filament.penyewa.resources.payments.create',
+                        [
+                            'rented_room_id' => $record->rented_room_id, // Pass the rented_room_id
+                            'amount' => $record->amount, // Pass the amount
+                            'due_date' => $record->due_date
+                        ]
+                    ))
+                    ->icon('heroicon-o-credit-card'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -189,6 +189,4 @@ class TagihanResource extends Resource
             'edit' => Pages\EditTagihan::route('/{record}/edit'),
         ];
     }
-
-    
 }

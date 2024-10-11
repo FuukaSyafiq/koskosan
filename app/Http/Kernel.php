@@ -19,6 +19,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
@@ -63,7 +64,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'terverifikasi' => \App\Http\Middleware\Terverifikasi::class,
-        'warga' => \App\Http\Middleware\RoleWarga::class,
+        // 'warga' => \App\Http\Middleware\RoleWarga::class,
         'role' => \App\Http\Middleware\CheckUserRole::class,
         'optimize.images' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,
     ];

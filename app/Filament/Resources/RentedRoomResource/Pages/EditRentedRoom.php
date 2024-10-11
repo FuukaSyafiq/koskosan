@@ -7,6 +7,7 @@ use App\Models\RentedRoom;
 use Filament\Actions;
 use App\Models\Room;
 use App\Models\Tagihan;
+use App\Models\TipeRoom;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Resources\Pages\EditRecord;
@@ -68,11 +69,18 @@ class EditRentedRoom extends EditRecord
             // Jika room_id disediakan dalam data
             if (isset($data['room_id'])) {
                 // Mengupdate kamar yang sedang digunakan menjadi tersedia
-                Room::where('id', $room->id)->update(['available' => true]);
+                $room->available = true;
+                $room->save();
+                // Room::where('id', $room->id)->update(['available' => true]);
 
                 // Mengupdate kamar baru menjadi tidak tersedia   
                 $roomYangDiganti = Room::where('id', $data['room_id'])->first();
-                Room::where('id', $data['room_id'])->update(['available' => false]);
+
+                $roomYangDiganti->available = false;
+                $roomYangDiganti->save();
+
+                $tipeRoomYangDiganti = TipeRoom::where('id', $roomYangDiganti->tipe_room_id)->first();
+
 
                 // Memperbarui room_id di tabel RentedRoom    
                 $rentedRoom = RentedRoom::where('id', $record->id)->first();
@@ -80,14 +88,16 @@ class EditRentedRoom extends EditRecord
                 RentedRoom::where('id', $rentedRoom->id)->update(["room_id" => $data['room_id']]);
 
                 Tagihan::where('rented_room_id', $rentedRoom->id)->update([
-                    "amount" => $roomYangDiganti->price
+                    "amount" => $tipeRoomYangDiganti->price
                 ]);
             }
 
             // Jika rent_time disediakan dalam data
             if (isset($data['rent_time'])) {
                 $rentedRoom = RentedRoom::where('id', $record->id)->first();
+
                 $apakahTagihanPernahDibayar = Tagihan::where('rented_room_id', $rentedRoom->id)->where('is_settled', true)->first();
+
                 if (!$apakahTagihanPernahDibayar) {
                     RentedRoom::where('id', $record->id)->update(["rent_time" => $data['rent_time']]);
                     Tagihan::where('rented_room_id', $record->id)->update([

@@ -22,6 +22,11 @@ class EditTipeRoom extends EditRecord
         ];
     }
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function handleRecordUpdate($record, array $data): Model
     {
         DB::beginTransaction();

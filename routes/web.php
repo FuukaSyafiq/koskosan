@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ListRoomController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\TipeRoomController;
 use App\View\Components\Denah;
 use App\View\Components\EditUserProfile;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,7 @@ Route::post('/roomlist', [ListRoomController::class, 'store']);
 Route::get('/room/{id}', [RoomController::class, 'details']);
 Route::get('/denah', [Denah::class, 'render']);
 
+Route::get('/tiperoom/{id}', [TipeRoomController::class, 'details']);
 //permission manager route (for debug purpose)
 Route::post("/roles", [RoleController::class, "store"]);
 Route::delete("/roles", [RoleController::class, "delete"]);

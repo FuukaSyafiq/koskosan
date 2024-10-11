@@ -19,6 +19,11 @@ class ListTransactions extends ListRecords
 
     public function getBreadcrumb(): string
     {
-        return 'History';
+        return '';
+    }
+
+    public function getTitle(): string
+    {
+        return 'Transaction history';
     }
 }

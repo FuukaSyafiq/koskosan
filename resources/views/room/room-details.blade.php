@@ -29,32 +29,32 @@
                 <div class="w-full rounded-md overflow-hidden">
                     <img src="{{ $imagePath }}" class="object-cover w-full h-80" alt="image" />
                 </div>
-
-                <!-- Thumbnail Images -->
-                <div class="flex justify-center gap-3">
-                    @foreach ($room as $key => $val)
-                        {{-- {{dd($val)}} --}}
-                        <img src="{{ $room[$key]['path'] }}"
-                            class="w-[90px] h-[90px] flex flex-wrap gap-1 justify-between rounded-md" alt="thumbnail" />
-                    @endforeach
-                </div>
             @endif()
         </div>
 
         <!-- Room Details -->
         <div class="flex flex-col justify-center w-full md:w-full lg:w-1/3 mt-5 space-y-4">
-            <h1 class="font-bold text-3xl text-center">{{ $room[0]['name'] }}</h1>
+            <h1 class="text-3xl text-center font-semibold tracking-tight text-gray-900 dark:text-white flex-1">
+                {{ $room[0]['name'] }}
+                <p class="text-sm text-gray-500 dark:text-gray-400">Tipe: {{ $tipeRoom }}</p>
+            </h1>
             <div class="flex justify-center items-center">
-                @for ($i = 1; $i <= $avgRating->avg_star; $i++)
-                    <x-star />
-                @endfor
-                <span
-                    class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
-                    {{ number_format($avgRating->avg_star, 1) }}
-                </span>
+                @if ($avgRating->avg_star == 0)
+                    <span class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">Belum ada review</span>
+                @else
+                    <span
+                        class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
+                        {{ number_format($avgRating->avg_star, 1) }}
+                    </span>
+                    <div class="flex items-center space-x-1 rtl:space-x-reverse">
+                        @for ($i = 1; $i <= $avgRating->avg_star; $i++)
+                            <x-star />
+                        @endfor
+                    </div>
+                @endif
             </div>
             <h2 class="font-bold text-2xl text-center">
-                Rp. {{ number_format($room[0]['price'], 0, ',', '.') }}/Bulan
+                Rp. {{ number_format($price, 0, ',', '.') }}/Bulan
 
             </h2>
 
@@ -68,7 +68,7 @@
             <div class="block max-w-sm p-6 mx-auto">
                 <h3 class="font-semibold text-lg text-center">Fasilitas</h3>
 
-                <p class="ml-2 text-left text-gray-600 mb-4">{{ $room[0]['facility'] }}</p>
+                <p class="ml-2 text-left text-gray-600 mb-4">{{ $facility }}</p>
 
             </div>
         </div>

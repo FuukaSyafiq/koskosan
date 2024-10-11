@@ -42,12 +42,12 @@ class Room extends Model
             'rooms.address',
             'rooms.name',
             'rooms.description',
-            'rooms.facility',
-            'rooms.price',
+            'tipe_room.id',
             'images.path'
         )
             ->distinct() // Menambahkan DISTINCT untuk hasil unik
             ->join('images', 'images.room_id', '=', 'rooms.id')
+            ->join('tipe_room', 'rooms.tipe_room_id', '=', 'tipe_room.id')
             ->where('rooms.id', $id)
             ->get();
     }
@@ -57,20 +57,25 @@ class Room extends Model
             'rooms.id',
             'rooms.address',
             'rooms.name',
-            'rooms.description',
-            'rooms.facility',
-            'rooms.price',
+            // 'rooms.description',
+            'tipe_room.facility',
+            'tipe_room.price',
             'rooms.available',
+            'tipe_room.tipe',
+            'tipe_room.ukuran',
             DB::raw('MIN(images.path) as path')
         )
             ->join('images', 'images.room_id', '=', 'rooms.id')
+            ->join('tipe_room', 'images.tipe_room_id', '=', 'tipe_room.id')
             ->groupBy(
                 'rooms.id',
                 'rooms.address',
                 'rooms.name',
-                'rooms.description',
-                'rooms.facility',
-                'rooms.price'
+                // 'rooms.description',
+                'tipe_room.facility',
+                'tipe_room.price',
+                'tipe_room.tipe',
+                'tipe_room.ukuran'
             )
             ->get();
     }
@@ -97,5 +102,9 @@ class Room extends Model
     public function Image()
     {
         return $this->belongsTo('');
+    }
+
+    public static function getRoomDetailById($id) {
+        return Room::where('id', $id)->first();  // Use first() to get a single model instance
     }
 }

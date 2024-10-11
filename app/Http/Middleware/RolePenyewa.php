@@ -18,6 +18,7 @@ class RolePenyewa
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check() && auth()->user()->role_id === Role::getIdByRole('PENYEWA')) {
+            // dd("is success")a
             return $next($request);
         }
         return redirect()->to('/login');

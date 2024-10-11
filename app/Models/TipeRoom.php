@@ -29,6 +29,22 @@ class TipeRoom extends Model
             ->get();
     }
 
+    public static function getTipeRoomById($id)
+    {
+        return self::select(
+            'tipe_room.id',
+            'tipe_room.tipe',
+            'tipe_room.facility',
+            'tipe_room.ukuran',
+            'tipe_room.price',
+            'images.path'
+        )
+            ->distinct() // Menambahkan DISTINCT untuk hasil unik
+            ->join('images', 'images.tipe_room_id', '=', 'tipe_room.id')
+            ->where('tipe_room.id', $id)
+            ->get();
+    }
+
     public static function getIdByTipeRoom($tipe)
     {
         return self::where('tipe', $tipe)->first()->id;

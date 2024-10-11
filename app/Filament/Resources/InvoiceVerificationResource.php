@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\Room;
 use App\Models\Tagihan;
 use App\Models\Transaction;
+use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -23,7 +24,9 @@ use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
+use GenerateMessage;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class InvoiceVerificationResource extends Resource
 {
@@ -77,7 +80,7 @@ class InvoiceVerificationResource extends Resource
                 TextColumn::make('room')
                     ->label('Kamar'),
                 TextColumn::make('amount')
-                ->formatStateUsing(fn($state) =>"Rp ". number_format($state, 0, ',', '.'))
+                    ->formatStateUsing(fn($state) => "Rp " . number_format($state, 0, ',', '.'))
                     ->label('Amount'),
                 TextColumn::make('tanggal_dibayar')
                     ->label('Tanggal dibayar'),
@@ -103,28 +106,45 @@ class InvoiceVerificationResource extends Resource
                     ->label('Verifikasi')
                     ->action(function (VerifikasiPembayaran $record) {
                         // Update the 'is_verified' field in register table
-                        $room = Room::where('name', $record->room)->first();
-                        $rentedRoom = RentedRoom::where('room_id', $room->id)->first();
+                        try {
 
-                        Tagihan::where('rented_room_id', $rentedRoom->id)->update([
-                            "is_settled" => true,
-                            "tanggal_dibayar" => $record->tanggal_dibayar
-                        ]);
+                            DB::beginTransaction();
+                            $room = Room::where('name', $record->room)->first();
+                            $rentedRoom = RentedRoom::where('room_id', $room->id)->first();
+                            $user = User::where('name', $record->pengirim)->first();
 
-                        $record->update([
-                            'is_valid' => true,
-                        ]);
+                            $tagihan = Tagihan::where('rented_room_id', $rentedRoom->id)->first();
+                            
+                            $tagihan->is_settled = true;
+                            $tagihan->tanggal_dibayar = $record->tanggal_dibayar;
+                            $tagihan->save();
+                            // ->update([
+                                // "is_settled" => true,
+                                // "tanggal_dibayar" => $record->tanggal_dibayar
+                            // ]);
 
-                        $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
+                            $record->update([
+                                'is_valid' => true,
+                            ]);
 
-                        Tagihan::create([
-                            "amount" => $record->amount,
-                            "rented_room_id" => $rentedRoom->id,
-                            "is_settled" => false,
-                            "tanggal_dibayar" => null,
-                            "due_date" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(30),  // 30 days after current due_date
-                            "tanggal_notif" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
-                        ]);
+                            $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
+
+                            Tagihan::create([
+                                "amount" => $record->amount,
+                                "rented_room_id" => $rentedRoom->id,
+                                "is_settled" => false,
+                                "tanggal_dibayar" => null,
+                                "due_date" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(30),  // 30 days after current due_date
+                                "tanggal_notif" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
+                            ]);
+
+                            $message =  GenerateMessage::whenIsVerified(Carbon::parse($tagihan->due_date), $room->name);
+                            SendToWhatsapp($user->contact, $message);
+                            DB::commit();
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            throw $e;
+                        }
                     })
                     ->requiresConfirmation()
                     ->color('success')

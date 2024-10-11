@@ -20,36 +20,36 @@ class ReviewSeeder extends Seeder
                 "review" => "Tempat yang sangat nyaman dan bersih. Sangat direkomendasikan!",
                 "star" => 5,
                 "user_id" => User::getIdByName("Rafi"),
-                "room_id" => Room::getRandomRoomIdByTipeRoom("FULL AC"),
+                "room_id" => Room::getRandomRoomIdByTipeRoom("Lengkap"),
             ],
             [
                 "review" => "Kamar luas dengan fasilitas lengkap, sangat puas!",
                 "star" => 4,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("FULL AC"),
+                "room_id" => Room::getRandomRoomIdByTipeRoom("Lengkap"),
                 "user_id" => User::getIdByName("Rafi"),
             ],
             [
                 "review" => "Sangat strategis dan dekat dengan pusat kota.",
                 "star" => 5,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("FULL AC"),
+                "room_id" => Room::getRandomRoomIdByTipeRoom("Lengkap"),
                 "user_id" => User::getIdByName("Rafi"),
             ],
             [
                 "review" => "Kamar sangat nyaman dan tenang, cocok untuk istirahat setelah seharian beraktivitas.",
                 "star" => 5,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("1 AC"),
+                "room_id" => Room::getRandomRoomIdByTipeRoom("Standard"),
                 "user_id" => User::getIdByName("Syafiq"),
             ],
             [
                 "review" => "Fasilitas lengkap dan dekat dengan tempat makan, sangat puas tinggal di sini!",
                 "star" => 4,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("1 AC"),
+                "room_id" => Room::getRandomRoomIdByTipeRoom("Standard"),
                 "user_id" => User::getIdByName("Syafiq"),
             ],
             [
                 "review" => "Sangat rekomendasi! TV berfungsi dengan baik dan kamar bersih.",
                 "star" => 5,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("1 AC"),
+                "room_id" => Room::getRandomRoomIdByTipeRoom("Standard"),
                 "user_id" => User::getIdByName("Syafiq"),
             ],
         ];
@@ -59,7 +59,8 @@ class ReviewSeeder extends Seeder
         }
     }
 
-    public static function down() {
+    public static function down()
+    {
         Review::query()->delete();
     }
 }

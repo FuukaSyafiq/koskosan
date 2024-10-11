@@ -121,16 +121,16 @@ class AdminPanelProvider extends PanelProvider
             //         ->hidden(fn (): bool => auth()->user()->can('list'))
             // ])
             ->navigationGroups([
-                'Pelayanan Tipe A',
-                'Pelayanan Tipe B',
-                'Layanan Komplain',
-                'Master',
-                'Report/Report Tipe A',
-                'Report/Report Tipe B',
-                'Report/Report Grafik',
-                'Report/Report Pemadanan',
-                'Report/Report Dinsos',
-                'Report/Laporan Kuisioner',
+                // 'Pelayanan Tipe A',
+                // 'Pelayanan Tipe B',
+                // 'Layanan Komplain',
+                // 'Master',
+                // 'Report/Report Tipe A',
+                // 'Report/Report Tipe B',
+                // 'Report/Report Grafik',
+                // 'Report/Report Pemadanan',
+                // 'Report/Report Dinsos',
+                // 'Report/Laporan Kuisioner',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -152,7 +152,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                RoleAdmin::class,
+                // RoleAdmin::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

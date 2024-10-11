@@ -6,6 +6,7 @@ use App\Filament\Resources\RentedRoomResource;
 use App\Models\Role;
 use App\Models\Room;
 use App\Models\Tagihan;
+use App\Models\TipeRoom;
 use App\Models\Transaction;
 use App\Models\User;
 use Filament\Actions;
@@ -43,9 +44,10 @@ class CreateRentedRoom extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
 
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
 
+            // dd($data);
             if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
                 $record = static::getModel()::create([
                     "user_id" => auth()->user()->id,
@@ -55,11 +57,14 @@ class CreateRentedRoom extends CreateRecord
 
                 // Mengupdate room agar tidak tersedia
                 $room = Room::where('id', $record->room_id)->first();
-                Room::where('id', $room->id)->update(['available' => false]);
+                $room->available = false;
+                // Room::where('id', $room->id)->update(['available' => false]);
+                $room->save();
 
+                $tipeRoom = TipeRoom::where('id', $room->tipe_room_id)->first();
                 // membuat tagihan sekarang
                 Tagihan::create([
-                    "amount" => $room->price,
+                    "amount" => $tipeRoom->price,
                     "rented_room_id" => $record->id,
                     "is_settled" => false,
                     "tanggal_dibayar" => null,
@@ -80,13 +85,21 @@ class CreateRentedRoom extends CreateRecord
                 "rent_time" => $data['rent_time']
             ]);
 
+            // dd($record);
             // Mengupdate room sebelumnya agar tersedia
             $room = Room::where('id', $record->room_id)->first();
-            Room::where('id', $room->id)->update(['available' => false]);
+            $room->available = false;
+            $room->save();
+
+            $tipeRoom = TipeRoom::where('id', $room->tipe_room_id)->first();
+            // dd($room);
+            // $room = Room::where('id', $room->id)->first();
+
+            // ->update(['available' => false]);
 
             // membuat tagihan sekarang
             Tagihan::create([
-                "amount" => $room->price,
+                "amount" => $tipeRoom->price,
                 "rented_room_id" => $record->id,
                 "is_settled" => false,
                 "tanggal_dibayar" => null,
@@ -104,7 +117,7 @@ class CreateRentedRoom extends CreateRecord
             DB::rollBack();
 
             // Log the error message
-            Log::error('Error creating DataPendaftar: ' . $e->getMessage());
+            Log::error('Error creating RentedRoom: ' . $e->getMessage());
 
             // Rethrow the exception or handle it as needed
             throw $e;

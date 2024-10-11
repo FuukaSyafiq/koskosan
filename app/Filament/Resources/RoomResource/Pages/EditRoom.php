@@ -19,7 +19,6 @@ class EditRoom extends EditRecord
     {
 
         try {
-
             DB::beginTransaction();
             if (isset($data['images'])) {
                 $previousImages = Image::where('room_id', $record->id)->get();

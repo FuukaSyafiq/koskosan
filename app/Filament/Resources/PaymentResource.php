@@ -35,7 +35,7 @@ class PaymentResource extends Resource
     {
         return false;
     }
-    
+
     protected static bool $shouldRegisterNavigation = false;
 
     public static function canCreate(): bool
@@ -61,8 +61,8 @@ class PaymentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-           ->schema([
-            TextInput::make('user')
+            ->schema([
+                TextInput::make('user')
                     ->label('Penyewa')
                     ->default(function () {
                         // Set the default user based on the rented_room_id
@@ -72,31 +72,31 @@ class PaymentResource extends Resource
                         return $user ? $user->name : null;
                     })
                     ->required()
-                    ->readOnly(true),   
-            TextInput::make('room')
+                    ->readOnly(true),
+                TextInput::make('room')
                     ->label('Kamar')
                     ->default(function () {
                         // Get the rented_room_id from the query parameter
                         $rentedRoomId = Request::query('rented_room_id');
                         $rentedRoom = RentedRoom::find($rentedRoomId);
-                
+
                         // Find the associated room and return its name
                         $room = $rentedRoom ? Room::find($rentedRoom->room_id) : null;
                         return $room ? $room->name : null;
                     })
                     ->required()
                     ->readOnly(true),
-            TextInput::make('due_date')
+                TextInput::make('due_date')
                     ->label('Pilih Jatuh Tempo')
                     ->default(fn() => Request::query('due_date'))
                     ->readOnly(true)
                     ->required(),
-            DatePicker::make('tanggal_dibayar')
-                    ->hidden(true)
-                    // ->visible(fn($get) => auth()->user()->role_id === Role::getIdByRole("OWNER"))
-                    ->label("Tanggal dibayar")
-                    ->default(now()),
-            TextInput::make('tagihan')
+                // DatePicker::make('tanggal_dibayar')
+                //         ->hidden(true)
+                //         // ->visible(fn($get) => auth()->user()->role_id === Role::getIdByRole("OWNER"))
+                //         ->label("Tanggal dibayar")
+                //         ->default(now()),
+                TextInput::make('tagihan')
                     ->label('Tagihan')
                     // ->formatStateUsing(fn($state) => number_format($state, 0, ',', '.'))
                     ->prefix("Rp.")
@@ -104,7 +104,7 @@ class PaymentResource extends Resource
                     ->required()
                     ->readOnly(true) // Make the field reactive to updates->
                     ->default(fn() => Request::query('amount')),
-            Section::make('lampiran')
+                Section::make('lampiran')
                     ->schema([
                         FileUpload::make('invoice_file')
                             ->label('Bukti pembayaran')
