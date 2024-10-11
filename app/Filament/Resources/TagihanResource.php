@@ -165,6 +165,7 @@ class TagihanResource extends Resource
                             'due_date' => $record->due_date
                         ]
                     ))
+                    ->visible(fn(Tagihan $record): bool => $record->is_settled === false)
                     ->icon('heroicon-o-credit-card'),
             ])
             ->bulkActions([

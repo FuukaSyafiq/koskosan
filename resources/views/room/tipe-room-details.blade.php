@@ -20,7 +20,8 @@
 
 @if (count($tipeRoom) > 0)
     <div class="w-full m-5">
-        <a href="/" class="font-bold">Back</a>
+        <a href="{{ url()->previous() }}" class="font-bold">
+            < Back</a>
     </div>
     <div class="flex w-11/12 mx-auto my-auto pt-7 justify-center items-center flex-col md:flex-col lg:flex-row">
         <div class="flex flex-col mt-10 w-full md:w-full lg:w-1/3 space-y-4">
@@ -58,6 +59,7 @@
         </div>
     </div>
 @else
-    <h1 class="font-bold text-3xl text-center flex w-full h-screen justify-center items-center">Tipe Room tidak ditemukan
+    <h1 class="font-bold text-3xl text-center flex w-full h-screen justify-center items-center">Tipe Room tidak
+        ditemukan
     </h1>
 @endif

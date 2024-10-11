@@ -16,70 +16,70 @@ class RoomSeeder extends Seeder
     {
         $datas = [
             [
-                "name" => "Kos Umi Qosim Lengkap Dengan Dapur",
+                "name" => "Kamar 1",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
             ],
             [
-                "name" => "Kos Umi Qosim Lengkap dengan TV dan WC",
+                "name" => "Kamar 2",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
             ],
             [
-                "name" => "Kos Umi Qosim Kipas Angin dan WC Lengkap",
+                "name" => "Kamar 3",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
             ],
             [
-                "name" => "Kos Umi Qosim Single Bed dengan Kamar Mandi",
+                "name" => "Kamar 4",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard")
             ],
             [
-                "name" => "Kos Umi Qosim Double Bed dengan WC dan Kipas Angin",
+                "name" => "Kamar 5",
                 "available" => true,
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim"
             ],
             [
-                "name" => "Kos Umi Qosim Lemari dan Kipas Angin",
+                "name" => "Kamar 6",
                 "available" => true,
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim"
             ],
             [
-                "name" => "Kos Umi Qosim Kamar Mandi dan Kipas Angin",
+                "name" => "Kamar 7",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
             ],
             [
-                "name" => "Kos Umi Qosim Kamar Mandi dengan TV",
+                "name" => "kamar 8",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
             ],
             [
-                "name" => "Kos Umi Qosim Lemari dan Dapur",
+                "name" => "Kamar 9",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
             ],
             [
-                "name" => "Kos Umi Qosim TV dengan Kamar Mandi",
+                "name" => "kammar 10",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",

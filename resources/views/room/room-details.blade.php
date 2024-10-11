@@ -11,6 +11,8 @@
             ->where('user_id', auth()->user()->id)
             ->first();
     }
+
+    // print_r($review);
     $vrImage = collect($room)->firstWhere('is_vr', true);
 
     // Jika tidak ada gambar VR, ambil gambar pertama sebagai fallback
@@ -20,7 +22,8 @@
 
 @if (count($room) > 0)
     <div class="w-full m-5">
-        <a href="/roomlist" class="font-bold">Back</a>
+        <a href="{{ url()->previous() }}" class="font-bold">
+            < Back</a>
     </div>
     <div class="flex w-11/12 mx-auto my-auto pt-7 justify-center items-center flex-col md:flex-col lg:flex-row">
         <div class="flex flex-col mt-10 w-full md:w-full lg:w-1/3 space-y-4">
@@ -40,7 +43,9 @@
             </h1>
             <div class="flex justify-center items-center">
                 @if ($avgRating->avg_star == 0)
-                    <span class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">Belum ada review</span>
+                    <span
+                        class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">Belum
+                        ada review</span>
                 @else
                     <span
                         class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
@@ -96,6 +101,11 @@
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 mt-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Send</button>
                 </form>
             @endif
+            @if (!isset($review[0]))
+                <div class="border p-4 flex justify-center items-center rounded-md shadow-sm">
+                    <h1 class="font-bold text-2xl my-5">Tidak ada review</h1>
+                </div>
+            @endif
             @foreach ($review as $item)
                 @if (isset($item->review))
                     <figure class="w-full shadow-lg p-5">
@@ -119,11 +129,6 @@
                     </figure>
                 @endif
             @endforeach
-            @if (!isset($reviews))
-                <div class="border p-4 flex justify-center items-center rounded-md shadow-sm">
-                    <h1 class="font-bold text-2xl my-5">Tidak ada review</h1>
-                </div>
-            @endif
         </div>
     </div>
 @else

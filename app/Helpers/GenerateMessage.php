@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Helpers;
 class GenerateMessage {
 
 	public static function whenIsVerified($tanggal, $kamar) {

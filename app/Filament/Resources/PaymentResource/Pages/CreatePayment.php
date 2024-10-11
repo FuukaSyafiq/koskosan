@@ -17,7 +17,7 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Pages\Actions\Action;
-use GenerateMessage;
+use App\Helpers\GenerateMessage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -60,15 +60,15 @@ class CreatePayment extends CreateRecord
                 $tagihanYangAkanDibayar->tanggal_dibayar = Carbon::now('utc');
 
                 $tagihanYangAkanDibayar->save();
+                $tanggalTagihan = Carbon::parse($tagihanYangAkanDibayar->due_date)->translatedFormat('Y-m-d');
 
-                $message = GenerateMessage::whenCreatePayment(Carbon::parse($tagihanYangAkanDibayar->due_date), $roomYangDisewa->name);
-                dd($message);
+                $message = GenerateMessage::whenCreatePayment($tanggalTagihan, $roomYangDisewa->name);
                 SendToWhatsapp($user->contact, $message);
 
                 $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
 
 
-                $tagihanMendatang = Tagihan::create([
+                Tagihan::create([
                     "amount" => $data['tagihan'],
                     "rented_room_id" => $rentedRoom->id,
                     "is_settled" => false,
@@ -76,7 +76,6 @@ class CreatePayment extends CreateRecord
                     "tanggal_notif" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
                 ]);
 
-                // dd($tagihanMendatang);
 
                 $noInvoice = GenerateInvoiceNumber();
 
@@ -112,10 +111,6 @@ class CreatePayment extends CreateRecord
                 "no_invoice" => $noInvoice,
                 "bukti_file" => $buktiFile->id
             ]);
-
-            // $message = GenerateMessage::whenCreatePayment(Carbon::parse($tagihanYangAkanDibayar->due_date), $roomYangDisewa->name);
-            // SendToWhatsapp($user->contact, $message);
-
 
             DB::commit();
             return $user;

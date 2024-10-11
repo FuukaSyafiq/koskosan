@@ -24,7 +24,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\Action;
-use GenerateMessage;
+use App\Helpers\GenerateMessage;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
 
@@ -114,13 +114,13 @@ class InvoiceVerificationResource extends Resource
                             $user = User::where('name', $record->pengirim)->first();
 
                             $tagihan = Tagihan::where('rented_room_id', $rentedRoom->id)->first();
-                            
+
                             $tagihan->is_settled = true;
                             $tagihan->tanggal_dibayar = $record->tanggal_dibayar;
                             $tagihan->save();
                             // ->update([
-                                // "is_settled" => true,
-                                // "tanggal_dibayar" => $record->tanggal_dibayar
+                            // "is_settled" => true,
+                            // "tanggal_dibayar" => $record->tanggal_dibayar
                             // ]);
 
                             $record->update([
@@ -137,8 +137,8 @@ class InvoiceVerificationResource extends Resource
                                 "due_date" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(30),  // 30 days after current due_date
                                 "tanggal_notif" => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
                             ]);
-
-                            $message =  GenerateMessage::whenIsVerified(Carbon::parse($tagihan->due_date), $room->name);
+                            $tanggalTagihan = Carbon::parse($tagihan->due_date)->translatedFormat('d F Y');
+                            $message =  GenerateMessage::whenIsVerified($tanggalTagihan, $room->name);
                             SendToWhatsapp($user->contact, $message);
                             DB::commit();
                         } catch (\Exception $e) {

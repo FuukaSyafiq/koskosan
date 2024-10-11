@@ -21,7 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Action;
-use GenerateMessage;
+use App\Helpers\GenerateMessage;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -85,7 +85,7 @@ class NotificationResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function ($query) {
-                return $query->whereDate('tanggal_notif', Carbon::today())->where('is_settled', false);
+                return $query->whereDate('tanggal_notif', '>=', Carbon::today())->where('is_settled', false);
             })
             ->columns([
                 TextColumn::make('rentedRoom.room.name')->label('Kamar'),
@@ -111,11 +111,18 @@ class NotificationResource extends Resource
                 Action::make('notifyUser')
                     ->label('Notify User')
                     ->action(function (Model $record) {
-                        $roomYangDisewa = RentedRoom::where('id', $record->rented_room_id)->first();
-                        $room = Room::where('id', $roomYangDisewa->room_id)->first();
-                        $user = User::where('id', $roomYangDisewa->user_id)->first();
-                        $message = GenerateMessage::whenAlmostDueDate($room->name);
-                        SendToWhatsapp($user->contact, $message);
+                        try {
+                            DB::beginTransaction();
+                            $roomYangDisewa = RentedRoom::where('id', $record->rented_room_id)->first();
+                            $room = Room::where('id', $roomYangDisewa->room_id)->first();
+                            $user = User::where('id', $roomYangDisewa->user_id)->first();
+                            $message = GenerateMessage::whenAlmostDueDate($room->name);
+                            SendToWhatsapp($user->contact, $message);
+                            DB::commit();
+                        } catch (\Exception $exception) {
+                            DB::rollBack();
+                            throw $exception;
+                        }
                     })
                     ->requiresConfirmation()
                     ->color('warning')
@@ -137,7 +144,8 @@ class NotificationResource extends Resource
                                     $room = Room::where('id', $roomYangDisewa->room_id)->first();
                                     $user = User::where('id', $roomYangDisewa->user_id)->first();
 
-                                   
+                                    $message = GenerateMessage::whenAlmostDueDate($room->name);
+                                    SendToWhatsapp($user->contact, $message);
                                 }
                             } catch (\Exception $e) {
                                 DB::rollBack();
