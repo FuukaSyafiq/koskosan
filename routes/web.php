@@ -9,6 +9,8 @@ use App\Http\Controllers\ListRoomController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\TipeRoomController;
+use App\Http\Controllers\PDFController;
+use App\Http\Controllers\BulkPDFController;
 use App\View\Components\Denah;
 use App\View\Components\EditUserProfile;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +26,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-// Route::get('/createReport', [CreateReport::class, 'index']);
+//pdf
+// Route::get('download/{id}',[PDFController::class, 'transactionpdf'])->name('download.pdf');
+// Route::post('/generate-bulk-pdf', [BulkPDFController::class, 'generate'])->name('generate.bulk.pdf');
 
 //
 Route::get('/', [IndexController::class, 'gets'])->name('index');

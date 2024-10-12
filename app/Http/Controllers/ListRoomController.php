@@ -20,8 +20,6 @@ class ListRoomController extends Controller
         //     $room->tipeRoom = $tipeRoom ? $tipeRoom->tipe : 'Not Available'; // Add tipe to each room
         //     dd($tipeRoom);
         // }
-
-
         return response()->view('room-list', ['user' => auth()->user(), 'rooms' => $rooms]);
     }
     public function store(Request $request)

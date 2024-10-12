@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
+use Illuminate\Support\Facades\Session;
+
 use App\Models\Image;
 use App\Models\Invoice;
 use App\Models\Role;
@@ -13,10 +15,14 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Model;
 
@@ -90,14 +96,41 @@ class TransactionResource extends Resource
                 // SelectFilter::make('')
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                Action::make('Cetak')
+                ->url(fn (VerifikasiPembayaran $record) => route('download.pdf', $record))
+                ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                    // Tables\Actions\DeleteBulkAction::make(),
+                    // BulkAction::make('generatePDF')
+                    //     ->label('Generate PDF')
+                    //     ->action(function (Collection $records) {
+                    //         $data = [];
+                        
+                    //         foreach ($records as $record) {
+                    //             $data[] = [
+                    //                 'tanggal_dibayar' => $record->tanggal_dibayar,
+                    //                 'no_invoice'      => $record->no_invoice,
+                    //                 'pengirim'        => $record->pengirim,
+                    //                 'kamar'           => $record->room,
+                    //                 'amount'          => $record->amount,
+                    //             ];
+                    //         }
+                        
+                    //         // Store in session
+                    //         Session::put('bulk_pdf_records', $data);
+                        
+                    //         return redirect()->route('generate.bulk.pdf');
+                    //     })
+                    //     ->requiresConfirmation()
+                    //     // ->icon('heroicon-o-document-download'),
+                            ]),
+                        ]);
     }
+
+
 
     public static function getRelations(): array
     {

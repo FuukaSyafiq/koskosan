@@ -21,60 +21,64 @@
 @endphp
 
 @if (count($room) > 0)
-    <div class="w-full m-5">
-        <a href="{{ url()->previous() }}" class="font-bold">
-            < Back</a>
-    </div>
-    <div class="flex w-11/12 mx-auto my-auto pt-7 justify-center items-center flex-col md:flex-col lg:flex-row">
-        <div class="flex flex-col mt-10 w-full md:w-full lg:w-1/3 space-y-4">
-            <!-- Main Image Container -->
-            @if (isset($room[0]['path']))
-                <div class="w-full rounded-md overflow-hidden">
-                    <img src="{{ $imagePath }}" class="object-cover w-full h-80" alt="image" />
-                </div>
-            @endif()
-        </div>
+    <div class="container mx-auto px-4 py-8">
+        <a href="/roomlist" class="inline-block mb-6 font-bold text-blue-600 hover:text-blue-800 transition-colors">
+            &larr; Back
+        </a>
 
-        <!-- Room Details -->
-        <div class="flex flex-col justify-center w-full md:w-full lg:w-1/3 mt-5 space-y-4">
-            <h1 class="text-3xl text-center font-semibold tracking-tight text-gray-900 dark:text-white flex-1">
-                {{ $room[0]['name'] }}
-                <p class="text-sm text-gray-500 dark:text-gray-400">Tipe: {{ $tipeRoom }}</p>
-            </h1>
-            <div class="flex justify-center items-center">
-                @if ($avgRating->avg_star == 0)
-                    <span
-                        class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">Belum
-                        ada review</span>
-                @else
-                    <span
-                        class="bg-blue-100 text-blue-800 mr-1 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
-                        {{ number_format($avgRating->avg_star, 1) }}
-                    </span>
-                    <div class="flex items-center space-x-1 rtl:space-x-reverse">
-                        @for ($i = 1; $i <= $avgRating->avg_star; $i++)
-                            <x-star />
-                        @endfor
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Main Image Container -->
+            <div class="w-full lg:w-1/2">
+                @if (isset($room[0]['path']))
+                    <div class="rounded-lg overflow-hidden shadow-lg">
+                        <img src="{{ $imagePath }}" class="w-full h-auto object-cover" alt="{{ $room[0]['name'] }}" />
                     </div>
                 @endif
             </div>
-            <h2 class="font-bold text-2xl text-center">
-                Rp. {{ number_format($price, 0, ',', '.') }}/Bulan
 
-            </h2>
+            <!-- Room Details -->
+            <div class="w-full lg:w-1/2 space-y-6">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                        {{ $room[0]['name'] }}
+                    </h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Tipe: {{ $tipeRoom }}</p>
+                </div>
 
-            <hr class="w-48 h-1 mx-auto border-0 bg-gray-600 rounded" />
+                <div class="flex items-center justify-center lg:justify-start space-x-2">
+                    @if ($avgRating->avg_star == 0)
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
+                            Belum ada review
+                        </span>
+                    @else
+                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
+                            {{ number_format($avgRating->avg_star, 1) }}
+                        </span>
+                        <div class="flex items-center">
+                            @for ($i = 1; $i <= $avgRating->avg_star; $i++)
+                                <x-star />
+                            @endfor
+                        </div>
+                    @endif
+                </div>
 
-            <div class="block max-w-sm p-6 mx-auto">
-                <p class="mt-3 text-lg text-center text-gray-700">Description</p>
-                <p class="ml-2 text-left text-gray-600 mb-4">{{ $room[0]['description'] }}</p>
-            </div>
+                <h2 class="font-bold text-2xl text-center lg:text-left text-green-600">
+                    Rp. {{ number_format($price, 0, ',', '.') }}/Bulan
+                </h2>
 
-            <div class="block max-w-sm p-6 mx-auto">
-                <h3 class="font-semibold text-lg text-center">Fasilitas</h3>
+                <hr class="w-full h-0.5 bg-gray-300" />
 
-                <p class="ml-2 text-left text-gray-600 mb-4">{{ $facility }}</p>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="font-semibold text-lg">Description</h3>
+                        <p class="text-gray-600">{{ $room[0]['description'] }}</p>
+                    </div>
 
+                    <div>
+                        <h3 class="font-semibold text-lg">Fasilitas</h3>
+                        <p class="text-gray-600">{{ $facility }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
