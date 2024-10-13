@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoomResource\Pages;
 use App\Filament\Resources\RoomResource\RelationManagers;
+use App\Helpers\DeleteImages;
 use App\Models\Image;
 use App\Models\Permission;
 use App\Models\Role;
@@ -112,7 +113,7 @@ class RoomResource extends Resource
         Section::make('VR Upload')
           ->schema([
             FileUpload::make('vr_files')->directory("VR")
-              ->acceptedFileTypes(['.vr', '.gltf', '.glb', '.fbx']) // Tentukan format file yang diterima
+              ->acceptedFileTypes(['.jpg', '.png', '.jpeg']) // Tentukan format file yang diterima
           ]),
       ]);
   }
@@ -162,7 +163,7 @@ class RoomResource extends Resource
 
               // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
               if ($image) {
-                DeleteImages($image->file_name);
+                DeleteImages::DeleteImages($image->file_name);
               }
 
               // Hapus record dari tabel

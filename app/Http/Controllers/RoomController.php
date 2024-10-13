@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Review;
 use App\Models\Room;
 use App\Models\TipeRoom;
+use Exception;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
@@ -24,6 +26,19 @@ class RoomController extends Controller
         // dd($tipeRoom->tipe);
 
         return view('room.room-details', ["id" => $id, "room" => $room, "review" => $review, "avgRating" => $avgRating, "tipeRoom" => $tipeRoom ? $tipeRoom->tipe : 'Not Available', 'price' => $tipeRoom->price, 'facility' => $tipeRoom->facility]);
+    }
+
+    public function getvrbyid($id)
+    {
+        try {
+            $vr = Image::getVrById($id);
+
+            // dd($vr);
+            // return view('denah', $vr);
+            return response()->json($vr, 200);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function search(Request $request)

@@ -36,7 +36,7 @@ class InitSeeder extends Seeder
         RoleSeeder::down();
         TipeRoomSeeder::down();
 
-        Storage::disk('public')->deleteDirectory('Image');
+        // Storage::disk('public')->deleteDirectory('Image');
         Storage::disk('public')->deleteDirectory('INVOICE');
         Storage::disk('public')->deleteDirectory('KTP');
         Storage::disk('public')->deleteDirectory('livewire-tmp');

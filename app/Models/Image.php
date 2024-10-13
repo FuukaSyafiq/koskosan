@@ -34,6 +34,10 @@ class Image extends Model
         return self::where("file_name", $filename)->first()->id;
     }
 
+    public static function getVrById($id) {
+        return self::select('images.path')->distinct()->join('rooms', 'images.room_id', '=', 'rooms.id')->where('images.is_vr', true)->where('rooms.id', $id)->first();
+    }
+
     public function rooms(){
         return $this->hasMany(Image::class);
     }

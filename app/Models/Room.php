@@ -50,6 +50,10 @@ class Room extends Model
         $tipeRoomId = TipeRoom::getIdByTipeRoom($tipe);
         return self::where('tipe_room_id', $tipeRoomId)->inRandomOrder()->first()->id;
     }
+   
+    public static function getIdByRoom($room) {
+        return self::where('name', $room)->first()->id;
+    }
 
     public static function getRoomById($id)
     {

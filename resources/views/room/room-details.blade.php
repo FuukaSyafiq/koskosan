@@ -22,7 +22,8 @@
 
 @if (count($room) > 0)
     <div class="container mx-auto px-4 py-8">
-        <a href="/roomlist" class="inline-block mb-6 font-bold text-blue-600 hover:text-blue-800 transition-colors">
+        <a href="{{ url()->previous() }}"
+            class="inline-block mb-6 font-bold text-blue-600 hover:text-blue-800 transition-colors">
             &larr; Back
         </a>
 
@@ -31,7 +32,8 @@
             <div class="w-full lg:w-1/2">
                 @if (isset($room[0]['path']))
                     <div class="rounded-lg overflow-hidden shadow-lg">
-                        <img src="{{ $room[0]['path']}}" class="w-full h-auto object-cover" alt="{{ $room[0]['name'] }}" />
+                        <img src="{{ $room[0]['path'] }}" class="w-full h-auto object-cover"
+                            alt="{{ $room[0]['name'] }}" />
                     </div>
                 @endif
             </div>
@@ -47,11 +49,13 @@
 
                 <div class="flex items-center justify-center lg:justify-start space-x-2">
                     @if ($avgRating->avg_star == 0)
-                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
                             Belum ada review
                         </span>
                     @else
-                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
                             {{ number_format($avgRating->avg_star, 1) }}
                         </span>
                         <div class="flex items-center">
@@ -88,7 +92,8 @@
         <h3 class="font-semibold text-lg text-center">Reviews</h3>
         <div class="space-y-4">
             @if (isset($rentedRoom))
-                <form action="/rating/room/{{ $room[0]['id'] }}?userid={{ auth()->user()->id ?? null }}" method="POST">
+                <form action="/rating/room/{{ $room[0]['id'] }}?userid={{ auth()->user()->id ?? null }}"
+                    method="POST">
                     @csrf
                     <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Give
                         Review</label>

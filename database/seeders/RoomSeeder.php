@@ -65,7 +65,7 @@ class RoomSeeder extends Seeder
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
             ],
             [
-                "name" => "kamar 8",
+                "name" => "Kamar 8",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",
@@ -79,7 +79,7 @@ class RoomSeeder extends Seeder
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
             ],
             [
-                "name" => "kammar 10",
+                "name" => "Kamar 10",
                 "available" => true,
                 "description" => "lorem ipsum",
                 "address" => "KosLoka Ibu Qosim",

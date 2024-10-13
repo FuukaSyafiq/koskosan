@@ -44,7 +44,16 @@ class ImageSeeder extends Seeder
                 "file_name" => "A1.jpg",
                 "mime_type" => "image/jpeg",
                 "size" => 2000,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Lengkap"),
+                "room_id" => Room::getIdByRoom("Kamar 1"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
+            ],
+            [
+                "path" => "/storage/Image/Kamar1.JPG",
+                "file_name" => "Kamar1.jpg",
+                "mime_type" => "image/jpeg",
+                "is_vr" => true,
+                "size" => 2000,
+                "room_id" => Room::getIdByRoom("Kamar 1"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
             ],
             [
@@ -52,7 +61,16 @@ class ImageSeeder extends Seeder
                 "file_name" => "A2.jpg",
                 "mime_type" => "image/jpeg",
                 "size" => 10500,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Lengkap"),
+                "room_id" => Room::getIdByRoom("Kamar 2"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
+            ],
+            [
+                "path" => "/storage/Image/Kamar2.JPG",
+                "file_name" => "Kamar2.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 2"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
             ],
             [
@@ -60,7 +78,16 @@ class ImageSeeder extends Seeder
                 "file_name" => "A3.jpg",
                 "mime_type" => "image/jpeg",
                 "size" => 2000,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Lengkap"),
+                "room_id" => Room::getIdByRoom("Kamar 3"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
+            ],
+            [
+                "path" => "/storage/Image/Kamar3.JPG",
+                "file_name" => "Kamar3.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 3"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Lengkap")
             ],
             [
@@ -69,59 +96,125 @@ class ImageSeeder extends Seeder
                 "mime_type" => "image/jpeg",
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
                 "size" => 2000,
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Standard"),
+                "room_id" => Room::getIdByRoom("Kamar 4"),
+            ],
+            [
+                "path" => "/storage/Image/Kamar4.JPG",
+                "file_name" => "Kamar4.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 4"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard")
             ],
             [
                 "path" => "https://sgp1.digitaloceanspaces.com/www.sewakost.com-66ae3a396f56c/listings/04-2022/ad78773/kamar-kost-baru-gress-utk-muslim-putra-1142759643.jpg",
                 "file_name" => "A5.jpg",
                 "mime_type" => "image/jpeg",
+                "room_id" => Room::getIdByRoom("Kamar 5"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Standard"),
                 "size" => 2000,
+            ],
+            [
+                "path" => "/storage/Image/Kamar5.JPG",
+                "file_name" => "Kamar5.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 5"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard")
             ],
             [
                 "path" => "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUSWiNhBdPkj3Tu3qg1sZ9WSrRJduEn9m2bQ&s",
                 "file_name" => "B1.jpg",
                 "mime_type" => "image/jpeg",
+                "room_id" => Room::getIdByRoom("Kamar 6"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard"),
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Standard"),
                 "size" => 2000,
+            ],
+            [
+                "path" => "/storage/Image/Kamar6.JPG",
+                "file_name" => "Kamar6.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 6"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Standard")
             ],
             [
                 "path" => "https://cdn0-production-images-kly.akamaized.net/QHt5mKjVjNx2BgCTeHnqnjOrVJg=/500x500/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/3143183/original/082060800_1591188998-Kos_5.jpg",
                 "file_name" => "B2.jpg",
                 "mime_type" => "image/jpeg",
+                "room_id" => Room::getIdByRoom("Kamar 7"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Ekonomis"),
                 "size" => 9400,
+            ],
+            [
+                "path" => "/storage/Image/Kamar7.JPG",
+                "file_name" => "Kamar7.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 7"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis")
             ],
             [
                 "path" => "https://i0.wp.com/bookingkost.com/wp-content/uploads/2021/01/Kost-Putri-Gg-belibis-No-3-1.png?fit=572%2C766&ssl=1",
                 "file_name" => "B3.jpg",
                 "mime_type" => "image/jpeg",
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Ekonomis"),
+                "room_id" => Room::getIdByRoom("Kamar 8"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
                 "size" => 11500
+            ],
+            [
+                "path" => "/storage/Image/Kamar8.JPG",
+                "file_name" => "Kamar8.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 8"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis")
             ],
             [
                 "path" => "https://www.infokostan.com/wp-content/uploads/2014/06/desain-kost-kamar-putri.jpg",
                 "file_name" => "B4.jpg",
                 "mime_type" => "image/jpeg",
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Ekonomis"),
+                "room_id" => Room::getIdByRoom("Kamar 9"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
                 "size" => 9800
+            ],
+            [
+                "path" => "/storage/Image/Kamar9.JPG",
+                "file_name" => "Kamar9.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 9"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis")
             ],
             [
                 "path" => "https://sgp1.digitaloceanspaces.com/www.sewakost.com-66ae3a396f56c/listings/03-2022/ad76102/kost-putri-46-yogyakarta-662668431_x2.jpg",
                 "file_name" => "B5.jpg",
                 "mime_type" => "image/jpeg",
-                "room_id" => Room::getRandomRoomIdByTipeRoom("Ekonomis"),
+                "room_id" => Room::getIdByRoom("Kamar 10"),
                 "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis"),
                 "size" => 9900
             ],
+            [
+                "path" => "/storage/Image/Kamar10.JPG",
+                "file_name" => "Kamar10.jpg",
+                "mime_type" => "image/jpeg",
+                "size" => 2000,
+                "is_vr" => true,
+                "room_id" => Room::getIdByRoom("Kamar 10"),
+                "tipe_room_id" => TipeRoom::getIdByTipeRoom("Ekonomis")
+            ],
         ];
 
+
+
         foreach ($images as $image) {
+            print_r($image);
             Image::create($image);
         }
     }

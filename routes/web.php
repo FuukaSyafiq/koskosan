@@ -27,11 +27,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 //pdf
-// Route::get('download/{id}',[PDFController::class, 'transactionpdf'])->name('download.pdf');
-// Route::post('/generate-bulk-pdf', [BulkPDFController::class, 'generate'])->name('generate.bulk.pdf');
+Route::get('download/{id}', [PDFController::class, 'transactionpdf'])->name('download.pdf');
+Route::post('/generate-bulk-pdf', [BulkPDFController::class, 'generate'])->name('generate.bulk.pdf');
+
 
 //
 Route::get('/', [IndexController::class, 'gets'])->name('index');
+Route::get('/room/vr/{id}', [RoomController::class, 'getvrbyid']);
 Route::post('/', [IndexController::class, 'store']);
 Route::get('/roomlist', [ListRoomController::class, 'gets']);
 Route::post('/roomlist', [ListRoomController::class, 'store']);
