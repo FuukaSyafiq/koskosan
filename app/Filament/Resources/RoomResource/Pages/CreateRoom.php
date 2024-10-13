@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\RoomResource\Pages;
 
 use App\Filament\Resources\RoomResource;
+use App\Helpers\DeleteImages;
+use App\Helpers\StoreImages;
 use App\Models\Image;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
@@ -37,11 +39,11 @@ class CreateRoom extends CreateRecord
             ]);
 
             foreach ($data['images'] as $image) {
-                StoreImages($image, $record->id);
+                StoreImages::StoreImages($image, $record->id);
             }
 
             if (isset($data['vr_files'])) {
-                StoreImages($data['vr_files'], $record->id, null, true);
+                StoreImages::StoreImages($data['vr_files'], $record->id, null, true);
             }
 
             DB::commit();
@@ -50,7 +52,7 @@ class CreateRoom extends CreateRecord
         } catch (\Exception $e) {
             // Rollback the transaction on error 
             foreach ($data['images'] as $image) {
-                DeleteImages($image);
+                DeleteImages::DeleteImages($image);
             }
 
             DB::rollBack();

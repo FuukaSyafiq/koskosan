@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\RoomResource\Pages;
 
 use App\Filament\Resources\RoomResource;
+use App\Helpers\DeleteImages;
+use App\Helpers\StoreImages;
 use App\Models\Image;
 use Filament\Actions;
 use \Illuminate\Database\Eloquent\Model;
@@ -23,20 +25,20 @@ class EditRoom extends EditRecord
             if (isset($data['images'])) {
                 $previousImages = Image::where('room_id', $record->id)->get();
                 foreach ($previousImages as $previousImage) {
-                    DeleteImages($previousImage->file_name);
+                    DeleteImages::DeleteImages($previousImage->file_name);
                 }
 
                 foreach ($data['images'] as $image) {
-                    StoreImages($image, $record->id);
+                    StoreImages::StoreImages($image, $record->id);
                 }
             }
 
             if (isset($data['vr_files'])) {
                 $previousVr = Image::where('room_id', $record->id)->where('is_vr', true)->first();
 
-                DeleteImages($previousVr->file_name);
+               DeleteImages::DeleteImages($previousVr->file_name);
 
-                StoreImages($data['vr_files'], $record->id, null, true);
+                StoreImages::StoreImages($data['vr_files'], $record->id, null, true);
             }
 
             DB::commit();
@@ -44,10 +46,10 @@ class EditRoom extends EditRecord
         } catch (\Exception $e) {
             // Rollback the transaction on error
 
-            foreach ($data['images'] as $image) {
-                DeleteImages($image);
-            }
             DB::rollBack();
+            foreach ($data['images'] as $image) {
+                DeleteImages::DeleteImages($image);
+            }
 
             // Log the error message
             Log::error('Error creating DataPendaftar: ' . $e->getMessage());

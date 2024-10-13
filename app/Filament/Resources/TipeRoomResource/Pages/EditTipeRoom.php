@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\TipeRoomResource\Pages;
 
 use App\Filament\Resources\TipeRoomResource;
+use App\Helpers\DeleteImages;
+use App\Helpers\StoreImages;
 use App\Models\Image;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -34,9 +36,9 @@ class EditTipeRoom extends EditRecord
         try {
             if (isset($data['image'])) {
                 $image = Image::where('tipe_room_id', $record->id)->first();
-                DeleteImages($image->file_name);
+                DeleteImages::DeleteImages($image->file_name);
 
-                StoreImages($data['image'], null, $record->id);
+               StoreImages::StoreImages($data['image'], null, $record->id);
             }
 
             $record->update($data);
@@ -44,9 +46,9 @@ class EditTipeRoom extends EditRecord
             return $record;
         } catch (\Exception $e) {
             // Rollback the transaction on error
-
-            DeleteImages($data['image']);
             DB::rollBack();
+
+            DeleteImages::DeleteImages($data['image']);
 
             // Log the error message
             Log::error('Error creating Tipe Room: ' . $e->getMessage());

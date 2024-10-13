@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
+use App\Helpers\StoreImages;
 use App\Models\Image;
 use App\Models\Role;
 use Filament\Actions;
@@ -25,22 +26,12 @@ class CreateUser extends CreateRecord
         ];
     }
 
-    private function store($filename): Image
-    {
-        $fileDB = Image::create([
-            'file_name' => $filename,
-            'mime_type' => null,
-            'path' => '/storage' . '/' . $filename,
-            'size' => null,
-        ]);
-        return $fileDB;
-    }
 
     public function handleRecordCreation(array $data): Model
     {
         try {
             DB::beginTransaction();
-            $ktp = StoreImages($data['ktp_id']);
+            $ktp = StoreImages::StoreImages($data['ktp_id']);
 
 
             $record = static::getModel()::create([

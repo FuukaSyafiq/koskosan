@@ -87,7 +87,7 @@ class EditRentedRoom extends EditRecord
                 // dd($rentedRoom->id);
                 RentedRoom::where('id', $rentedRoom->id)->update(["room_id" => $data['room_id']]);
 
-                Tagihan::where('rented_room_id', $rentedRoom->id)->update([
+                Tagihan::where('rented_room_id', $rentedRoom->id)->where('is_settled', false)->update([
                     "amount" => $tipeRoomYangDiganti->price
                 ]);
             }
@@ -100,7 +100,7 @@ class EditRentedRoom extends EditRecord
 
                 if (!$apakahTagihanPernahDibayar) {
                     RentedRoom::where('id', $record->id)->update(["rent_time" => $data['rent_time']]);
-                    Tagihan::where('rented_room_id', $record->id)->update([
+                    Tagihan::where('rented_room_id', $record->id)->where('is_settled', false)->update([
                         "due_date" => Carbon::parse($data['rent_time']),
                         "tanggal_notif" => Carbon::parse($data['rent_time'])
                     ]);
@@ -111,9 +111,8 @@ class EditRentedRoom extends EditRecord
 
             return $record;
         } catch (\Exception $e) {
-            // dd($e);
-            Log::info($e->getMessage());
             DB::rollBack();
+            Log::info($e->getMessage());
 
             return $record;
         }

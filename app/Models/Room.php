@@ -29,6 +29,22 @@ class Room extends Model
         return $this->hasMany(RentedRoom::class);
     }
 
+    public static function getAllRoomInDenah() {
+        return self::distinct()
+        ->leftJoin('images', 'images.room_id', '=', 'rooms.id')
+        ->where('images.is_vr', false) // Filter to only include non-VR images
+        ->groupBy([
+            'rooms.id',
+            'rooms.name',
+        ])
+        ->select([
+            'rooms.id',
+            'rooms.name',
+            DB::raw('MIN(images.path) as path') // Get the path of the first non-VR image
+        ])
+        ->get();
+    }
+
     public static function getRandomRoomIdByTipeRoom($tipe)
     {
         $tipeRoomId = TipeRoom::getIdByTipeRoom($tipe);

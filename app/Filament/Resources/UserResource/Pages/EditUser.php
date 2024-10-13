@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Helpers\DeleteImages;
+use App\Helpers\StoreImages;
 use App\Filament\Resources\UserResource;
 use App\Models\Image;
 use App\Models\User;
@@ -43,11 +45,11 @@ class EditUser extends EditRecord
                 $user = User::where('email', $record->email)->first();
                 $previousImage = Image::where('id', $user->ktp_id)->first();
                 // $ktp = $this->store($data['ktp_id']);
-                $ktp =  StoreImages($data['ktp_id']);
+                $ktp =  StoreImages::StoreImages($data['ktp_id']);
 
                 User::where('email', $record->email)->update(['ktp_id' => $ktp->id]);
-
-                DeleteImages($previousImage->file_name);
+                // Helpers::
+                DeleteImages::DeleteImages($previousImage->file_name);
             }
 
             $record->update($data);

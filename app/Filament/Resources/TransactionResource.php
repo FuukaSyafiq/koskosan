@@ -7,11 +7,9 @@ use App\Filament\Resources\TransactionResource\RelationManagers;
 use Illuminate\Support\Facades\Session;
 
 use App\Models\Image;
-use App\Models\Invoice;
 use App\Models\Role;
 use App\Models\VerifikasiPembayaran;
 use Carbon\Carbon;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -97,9 +95,9 @@ class TransactionResource extends Resource
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
-                Action::make('Cetak')
-                ->url(fn (VerifikasiPembayaran $record) => route('download.pdf', $record))
-                ->openUrlInNewTab(),
+                // Action::make('Cetak')
+                // ->url(fn (VerifikasiPembayaran $record) => route('download.pdf', $record))
+                // ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

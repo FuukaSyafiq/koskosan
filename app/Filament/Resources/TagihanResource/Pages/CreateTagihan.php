@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TagihanResource\Pages;
 
 use App\Filament\Resources\TagihanResource;
+use App\Helpers\Sender;
 use App\Models\RentedRoom;
 use App\Models\Room;
 use App\Models\Tagihan;
@@ -58,7 +59,7 @@ class CreateTagihan extends CreateRecord
             ]);
 
             $message = GenerateMessage::whenCreateTagihan($room->name);
-            SendToWhatsapp($user->contact, $message);
+            Sender::SendToWhatsapp($user->contact, $message);
 
             $record->save();
             DB::commit();

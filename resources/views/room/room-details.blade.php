@@ -12,11 +12,11 @@
             ->first();
     }
 
-    // print_r($review);
-    $vrImage = collect($room)->firstWhere('is_vr', true);
+    // // print_r($review);
+    // $vrImage = collect($room)->firstWhere('is_vr', true);
 
-    // Jika tidak ada gambar VR, ambil gambar pertama sebagai fallback
-    $imagePath = $vrImage ? $vrImage['path'] : $room[0]['path'];
+    // // Jika tidak ada gambar VR, ambil gambar pertama sebagai fallback
+    // $imagePath = $vrImage ? $vrImage['path'] : $room[0]['path'];
 
 @endphp
 
@@ -31,7 +31,7 @@
             <div class="w-full lg:w-1/2">
                 @if (isset($room[0]['path']))
                     <div class="rounded-lg overflow-hidden shadow-lg">
-                        <img src="{{ $imagePath }}" class="w-full h-auto object-cover" alt="{{ $room[0]['name'] }}" />
+                        <img src="{{ $room[0]['path']}}" class="w-full h-auto object-cover" alt="{{ $room[0]['name'] }}" />
                     </div>
                 @endif
             </div>

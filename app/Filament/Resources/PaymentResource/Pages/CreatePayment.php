@@ -3,21 +3,21 @@
 namespace App\Filament\Resources\PaymentResource\Pages;
 
 use App\Filament\Resources\PaymentResource;
+use App\Helpers\DeleteImages;
+use App\Helpers\Invoice;
+use App\Helpers\Sender;
 use App\Models\RentedRoom;
 use App\Models\Role;
 use App\Models\Room;
 use App\Models\Tagihan;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Image;
-use App\Models\Invoice;
 use App\Models\VerifikasiPembayaran;
 use Carbon\Carbon;
-use Filament\Actions;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Pages\Actions\Action;
 use App\Helpers\GenerateMessage;
+use App\Helpers\StoreImages;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -63,7 +63,7 @@ class CreatePayment extends CreateRecord
                 $tanggalTagihan = Carbon::parse($tagihanYangAkanDibayar->due_date)->translatedFormat('Y-m-d');
 
                 $message = GenerateMessage::whenCreatePayment($tanggalTagihan, $roomYangDisewa->name);
-                SendToWhatsapp($user->contact, $message);
+                Sender::SendToWhatsapp($user->contact, $message);
 
                 $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
 
@@ -77,9 +77,9 @@ class CreatePayment extends CreateRecord
                 ]);
 
 
-                $noInvoice = GenerateInvoiceNumber();
+                $noInvoice = Invoice::GenerateInvoiceNumber();
 
-                $buktiPembayaran = StoreImages($data['invoice_file']);
+                $buktiPembayaran = StoreImages::StoreImages($data['invoice_file']);
 
                 VerifikasiPembayaran::create([
                     "is_valid" => true,
@@ -98,9 +98,9 @@ class CreatePayment extends CreateRecord
 
             $roomYangDisewa = Room::where('id', $rentedRoom->room_id)->first();
 
-            $noInvoice = GenerateInvoiceNumber();
+            $noInvoice = Invoice::GenerateInvoiceNumber();
 
-            $buktiFile =  StoreImages($data['invoice_file']);
+            $buktiFile = StoreImages::StoreImages($data['invoice_file']);
 
             VerifikasiPembayaran::create([
                 "is_valid" => false,
@@ -116,7 +116,7 @@ class CreatePayment extends CreateRecord
             return $user;
         } catch (\Exception $e) {
             DB::rollBack();
-            DeleteImages($data['invoice_file']);
+            DeleteImages::DeleteImages($data['invoice_file']);
 
             throw $e;
         }

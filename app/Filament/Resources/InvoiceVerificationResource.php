@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceVerificationResource\Pages;
 use App\Filament\Resources\InvoiceVerificationResource\RelationManagers;
+use App\Helpers\Sender;
 use App\Models\VerifikasiPembayaran;
 use App\Models\Image;
 use App\Models\RentedRoom;
@@ -88,14 +89,13 @@ class InvoiceVerificationResource extends Resource
                     ->label('Nomor Invoice'),
                 BooleanColumn::make('is_valid')
                     ->label('Terverifikasi'),
-                // ImageColumn::make('invoice_file')
-                //     ->label('Bukti Pembayaran')
-                //     ->getStateUsing(callback: function ($record) {
-                //         // dd($record->id);
-                //         $image = Image::where('id', $record->invoice_file)->first();
-                //         // Debugging untuk melihat nilai yang didapat
-                //         return url($image->path) ?? null;
-                //     }),
+                ImageColumn::make('invoice_file')
+                    ->label('Bukti Pembayaran')
+                    ->getStateUsing(callback: function ($record) {
+                        $image = Image::where('id', $record->bukti_file)->first();
+                        // Debugging untuk melihat nilai yang didapat
+                        return url($image->path) ?? null;
+                    }),
             ])
             ->filters([
                 //
@@ -118,11 +118,7 @@ class InvoiceVerificationResource extends Resource
                             $tagihan->is_settled = true;
                             $tagihan->tanggal_dibayar = $record->tanggal_dibayar;
                             $tagihan->save();
-                            // ->update([
-                            // "is_settled" => true,
-                            // "tanggal_dibayar" => $record->tanggal_dibayar
-                            // ]);
-
+                          
                             $record->update([
                                 'is_valid' => true,
                             ]);
@@ -139,7 +135,7 @@ class InvoiceVerificationResource extends Resource
                             ]);
                             $tanggalTagihan = Carbon::parse($tagihan->due_date)->translatedFormat('d F Y');
                             $message =  GenerateMessage::whenIsVerified($tanggalTagihan, $room->name);
-                            SendToWhatsapp($user->contact, $message);
+                            Sender::SendToWhatsapp($user->contact, $message);
                             DB::commit();
                         } catch (\Exception $e) {
                             DB::rollBack();
