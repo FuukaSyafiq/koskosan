@@ -12,7 +12,7 @@
             ->first();
     }
 
-    // // print_r($review);
+    // print_r($room);
     // $vrImage = collect($room)->firstWhere('is_vr', true);
 
     // // Jika tidak ada gambar VR, ambil gambar pertama sebagai fallback
@@ -34,6 +34,17 @@
                     <div class="rounded-lg overflow-hidden shadow-lg">
                         <img src="{{ $room[0]['path'] }}" class="w-full h-auto object-cover"
                             alt="{{ $room[0]['name'] }}" />
+                    </div>
+                @endif
+                @if (isset($room[1]['path']))
+                    <!-- Small images beneath the main image -->
+                    <div class="grid grid-cols-4 gap-2 mt-4">
+                        @for ($i = 1; $i <= 4; $i++)
+                            <div class="rounded-lg overflow-hidden shadow-lg h-32 w-32">
+                                <img src="{{ $room[$i]['path'] }}" class="object-cover p-auto w-full h-full"
+                                    alt="Image {{ $i }}" />
+                            </div>
+                        @endfor
                     </div>
                 @endif
             </div>

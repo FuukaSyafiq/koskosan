@@ -23,7 +23,6 @@ class RoomController extends Controller
 
         $roomDetail = Room::getRoomDetailById($id);
         $tipeRoom = TipeRoom::find($roomDetail->tipe_room_id);
-        // dd($tipeRoom->tipe);
 
         return view('room.room-details', ["id" => $id, "room" => $room, "review" => $review, "avgRating" => $avgRating, "tipeRoom" => $tipeRoom ? $tipeRoom->tipe : 'Not Available', 'price' => $tipeRoom->price, 'facility' => $tipeRoom->facility]);
     }
@@ -34,7 +33,7 @@ class RoomController extends Controller
             $vr = Image::getVrById($id);
 
             // dd($vr);
-            // return view('denah', $vr);
+            // return view('vr', ["vr" => $vr]);
             return response()->json($vr, 200);
         } catch (Exception $e) {
             throw $e;

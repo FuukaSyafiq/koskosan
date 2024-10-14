@@ -8,6 +8,7 @@ use App\Helpers\DeleteImages;
 use App\Models\Image;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\TipeRoom;
 use App\Models\Room;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -40,7 +41,6 @@ class RoomResource extends Resource
   protected static ?string $navigationIcon = 'heroicon-c-home-modern';
 
   protected static ?string $navigationGroup = 'Room management';
-
   public static function canCreate(): bool
   {
     return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
@@ -64,19 +64,25 @@ class RoomResource extends Resource
 
   public static function form(Form $form): Form
   {
+    $currentTipeRoomId = request()->route('record')
+      ? Room::find(request()->route('record'))->tipe_room_id
+      : null;
+
     return $form
       ->schema([
         Section::make('')
           ->schema([
             TextInput::make('name')
+              ->required()
               ->label('nama ruang'),
             Select::make('tipe_room_id')
               ->label('Tipe Ruang')
+              ->required()
               ->relationship('tipe_room', 'tipe')
               ->reactive()  // Makes the select reactive
               ->afterStateUpdated(function (callable $set, $state) {
                 // Fetch the related tipe_room details when tipe_room_id is updated
-                $tipeRoom = \App\Models\TipeRoom::find($state);
+                $tipeRoom = TipeRoom::find($state);
 
                 if ($tipeRoom) {
                   $set('price', $tipeRoom->price);
@@ -87,33 +93,49 @@ class RoomResource extends Resource
                 }
               }),
             TextInput::make('price')
+              ->required()
               ->label('Harga')
               ->prefix('Rp.')
+              // ->placeholder(function () use ($currentTipeRoomId) {
+              //   // Fetch the TipeRoom based on the currentTipeRoomId
+              //   $tipeRoom = $currentTipeRoomId ? TipeRoom::find($currentTipeRoomId) : null;
+              //   return $tipeRoom ? $tipeRoom->price : null;
+              // })
               ->readOnly(true)
               ->suffix('/Bulan'),
             TextInput::make('facility')
+              ->required()
               ->readOnly(true)
+              // ->placeholder(function () use ($currentTipeRoomId) {
+              //   // Fetch the TipeRoom based on the currentTipeRoomId
+              //   $tipeRoom = $currentTipeRoomId ? TipeRoom::find($currentTipeRoomId) : null;
+              //   return $tipeRoom ? $tipeRoom->facility : null;
+              // })
               ->label('fasilitas'),
             TextArea::make('description')
+              ->required()
               ->label('deskripsi')
               ->autosize()
               ->maxLength(255),
             TextInput::make('address')
+              ->required()
               ->label('address'),
           ])
           ->columns(2),
         Section::make('Foto')
           ->schema([
             FileUpload::make('images')
-              ->multiple()->directory("Image") // Enable multiple file uploads
+              ->directory("Image") // Enable multiple file uploads
               ->image() // Specify that the upload is for images
               ->required() // Optional: Make the field required
-              ->maxFiles(4)
+              ->required(fn($livewire) => !$livewire->record)
+              ->maxFiles(5)
+              ->multiple()
           ]),
         Section::make('VR Upload')
           ->schema([
-            FileUpload::make('vr_files')->directory("VR")
-              ->acceptedFileTypes(['.jpg', '.png', '.jpeg']) // Tentukan format file yang diterima
+            FileUpload::make('vr_files')->directory("VR")->maxSize(99999999999)
+            // ->acceptedFileTypes(['.jpg', '.JPEG', '.png', '.jpeg']) // Tentukan format file yang diterima
           ]),
       ]);
   }
@@ -156,20 +178,20 @@ class RoomResource extends Resource
       ->bulkActions([
         Tables\Actions\BulkActionGroup::make([
           Tables\Actions\DeleteBulkAction::make()->requiresConfirmation()->color('danger')
-          ->action(function (Collection $records) {
-            foreach ($records as $record) {
-              // Temukan gambar terkait berdasarkan tipe_room_id
-              $image = Image::where('room_id', $record->id)->first();
+            ->action(function (Collection $records) {
+              foreach ($records as $record) {
+                // Temukan gambar terkait berdasarkan tipe_room_id
+                $image = Image::where('room_id', $record->id)->first();
 
-              // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
-              if ($image) {
-                DeleteImages::DeleteImages($image->file_name);
+                // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
+                if ($image) {
+                  DeleteImages::DeleteImages($image->file_name);
+                }
+
+                // Hapus record dari tabel
+                $record->delete();
               }
-
-              // Hapus record dari tabel
-              $record->delete();
-            }
-          }),
+            }),
         ]),
       ]);
   }

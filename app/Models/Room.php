@@ -29,20 +29,21 @@ class Room extends Model
         return $this->hasMany(RentedRoom::class);
     }
 
-    public static function getAllRoomInDenah() {
+    public static function getAllRoomInDenah()
+    {
         return self::distinct()
-        ->leftJoin('images', 'images.room_id', '=', 'rooms.id')
-        ->where('images.is_vr', false) // Filter to only include non-VR images
-        ->groupBy([
-            'rooms.id',
-            'rooms.name',
-        ])
-        ->select([
-            'rooms.id',
-            'rooms.name',
-            DB::raw('MIN(images.path) as path') // Get the path of the first non-VR image
-        ])
-        ->get();
+            ->leftJoin('images', 'images.room_id', '=', 'rooms.id')
+            ->where('images.is_vr', false) // Filter to only include non-VR images
+            ->groupBy([
+                'rooms.id',
+                'rooms.name',
+            ])
+            ->select([
+                'rooms.id',
+                'rooms.name',
+                DB::raw('MIN(images.path) as path') // Get the path of the first non-VR image
+            ])->orderBy('id', 'asc')
+            ->get();
     }
 
     public static function getRandomRoomIdByTipeRoom($tipe)
@@ -50,8 +51,9 @@ class Room extends Model
         $tipeRoomId = TipeRoom::getIdByTipeRoom($tipe);
         return self::where('tipe_room_id', $tipeRoomId)->inRandomOrder()->first()->id;
     }
-   
-    public static function getIdByRoom($room) {
+
+    public static function getIdByRoom($room)
+    {
         return self::where('name', $room)->first()->id;
     }
 
@@ -65,10 +67,9 @@ class Room extends Model
             'tipe_room.id',
             'images.path'
         )
-            ->distinct() // Menambahkan DISTINCT untuk hasil unik
             ->join('images', 'images.room_id', '=', 'rooms.id')
             ->join('tipe_room', 'rooms.tipe_room_id', '=', 'tipe_room.id')
-            ->where('rooms.id', $id)
+            ->where('rooms.id', $id)->where('images.is_vr', false)
             ->get();
     }
     public static function getAvailableRooms()
@@ -77,7 +78,6 @@ class Room extends Model
             'rooms.id',
             'rooms.address',
             'rooms.name',
-            // 'rooms.description',
             'tipe_room.facility',
             'tipe_room.price',
             'rooms.available',
@@ -86,17 +86,16 @@ class Room extends Model
             DB::raw('MIN(images.path) as path')
         )
             ->join('images', 'images.room_id', '=', 'rooms.id')
-            ->join('tipe_room', 'images.tipe_room_id', '=', 'tipe_room.id')
+            ->join('tipe_room', 'rooms.tipe_room_id', '=', 'tipe_room.id')
             ->groupBy(
                 'rooms.id',
                 'rooms.address',
                 'rooms.name',
-                // 'rooms.description',
                 'tipe_room.facility',
                 'tipe_room.price',
                 'tipe_room.tipe',
                 'tipe_room.ukuran'
-            )
+            )->where('images.is_vr', false)
             ->get();
     }
 
@@ -124,7 +123,8 @@ class Room extends Model
         return $this->belongsTo('');
     }
 
-    public static function getRoomDetailById($id) {
+    public static function getRoomDetailById($id)
+    {
         return Room::where('id', $id)->first();  // Use first() to get a single model instance
     }
 }

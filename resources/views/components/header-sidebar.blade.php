@@ -16,7 +16,7 @@
     <li>
         <a href="{{ url('/roomlist') }}"
             class="block m-auto p-3 font-bold b hover:bg-slate-700 g-slate-700 rounded md:bg-transparent  md:p-0 hover:text-white text-black"
-            aria-current="page">List Kamar</a>
+            aria-current="page">List Tipe Kamar</a>
     </li>
     @if ($user)
         @if ($user->role_id == \App\Models\Role::getIdByRole('PENYEWA'))

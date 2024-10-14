@@ -73,7 +73,7 @@ class TransactionResource extends Resource
             if (auth()->user()->role_id === Role::getIdByRole("PENYEWA")) {
                 return $query->where('pengirim', auth()->user()->name)->where('is_valid', true);
             }
-            return $query;
+            return $query->where('is_valid', true);
         })
             ->columns([
                 TextColumn::make('amount')->label('Nominal')->formatStateUsing(fn($state) => 'Rp. ' . number_format($state, 0, ',', '.')),
@@ -95,37 +95,13 @@ class TransactionResource extends Resource
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
-                // Action::make('Cetak')
-                // ->url(fn (VerifikasiPembayaran $record) => route('download.pdf', $record))
-                // ->openUrlInNewTab(),
+                Action::make('Cetak')
+                    ->url(fn(VerifikasiPembayaran $record) => route('download.pdf', $record))
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                    // BulkAction::make('generatePDF')
-                    //     ->label('Generate PDF')
-                    //     ->action(function (Collection $records) {
-                    //         $data = [];
-                        
-                    //         foreach ($records as $record) {
-                    //             $data[] = [
-                    //                 'tanggal_dibayar' => $record->tanggal_dibayar,
-                    //                 'no_invoice'      => $record->no_invoice,
-                    //                 'pengirim'        => $record->pengirim,
-                    //                 'kamar'           => $record->room,
-                    //                 'amount'          => $record->amount,
-                    //             ];
-                    //         }
-                        
-                    //         // Store in session
-                    //         Session::put('bulk_pdf_records', $data);
-                        
-                    //         return redirect()->route('generate.bulk.pdf');
-                    //     })
-                    //     ->requiresConfirmation()
-                    //     // ->icon('heroicon-o-document-download'),
-                            ]),
-                        ]);
+                Tables\Actions\BulkActionGroup::make([]),
+            ]);
     }
 
 

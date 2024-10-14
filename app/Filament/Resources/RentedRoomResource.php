@@ -146,7 +146,7 @@ class RentedRoomResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                // Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make()->after(function ($record) {
                     Room::where('id', $record->room_id)->update(["available" => true]);
                 })

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Helpers\DeleteImages;
 use App\Models\Image;
 use App\Models\Permission;
 use App\Models\Role;
@@ -147,6 +148,7 @@ class UserResource extends Resource
                         FileUpload::make('ktp_id')
                             ->label('KTP')
                             ->required()->directory("KTP")
+                            ->required(fn($livewire) => !$livewire->record)
                             ->default(function ($record) {
                                 // Check if the KTP ID exists and retrieve the path
                                 $image = Image::where('id', $record->ktp_id)->first();
@@ -197,7 +199,7 @@ class UserResource extends Resource
 
                                 // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
                                 if ($image) {
-                                    DeleteImages($image->file_name);
+                                    DeleteImages::DeleteImages($image->file_name);
                                 }
 
                                 // Hapus record dari tabel

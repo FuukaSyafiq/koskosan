@@ -12,7 +12,7 @@ class ListRoomController extends Controller
     public function gets()
     {
 
-        $rooms = Room::getAvailableRooms();
+        $rooms = TipeRoom::getAllTipeRooms();
         // dd($rooms);
 
         // foreach ($rooms as $room) {

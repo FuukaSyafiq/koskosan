@@ -12,6 +12,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use \Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -47,12 +48,20 @@ class EditUser extends EditRecord
                 // $ktp = $this->store($data['ktp_id']);
                 $ktp =  StoreImages::StoreImages($data['ktp_id']);
 
-                User::where('email', $record->email)->update(['ktp_id' => $ktp->id]);
+                $alreadyUpdate = User::where('email', $record->email)->update(['ktp_id' => $ktp->id]);
                 // Helpers::
                 DeleteImages::DeleteImages($previousImage->file_name);
+                // dd($alreadyUpdate);
             }
 
-            $record->update($data);
+            $record->update([
+                "name" => $data['name'],
+                "email" => $data['email'],
+                "password" => Hash::make($data['password']),
+                "contact" => $data['contact'],
+                "address" => $data['address']
+            ]);
+            // $record->update($data);
             DB::commit();
 
             return $record;

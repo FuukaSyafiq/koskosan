@@ -32,16 +32,22 @@ class EditTipeRoom extends EditRecord
     protected function handleRecordUpdate($record, array $data): Model
     {
         DB::beginTransaction();
-        
+
         try {
             if (isset($data['image'])) {
                 $image = Image::where('tipe_room_id', $record->id)->first();
                 DeleteImages::DeleteImages($image->file_name);
 
-               StoreImages::StoreImages($data['image'], null, $record->id);
+                StoreImages::StoreImages($data['image'], null, $record->id);
             }
 
-            $record->update($data);
+            $record->update([
+                "tipe" => $data['tipe'],
+                "facility" => $data['facility'],
+                "ukuran" => $data['ukuran'],
+                "price" => $data['price']
+            ]);
+
             DB::commit();
             return $record;
         } catch (\Exception $e) {

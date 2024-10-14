@@ -10,7 +10,7 @@ class Sender
 	{
 		try {
 			$apiUrl = env("API_WHATSAPP_URL");
-
+			// dd($apiUrl);
 			Http::asForm()->post($apiUrl, [
 				'no_telepon' => $noTelp,
 				'isi_pesan' => $text,

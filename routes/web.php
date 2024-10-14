@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 
 //pdf
 Route::get('download/{id}', [PDFController::class, 'transactionpdf'])->name('download.pdf');
-Route::post('/generate-bulk-pdf', [BulkPDFController::class, 'generate'])->name('generate.bulk.pdf');
+// Route::post('/generate-bulk-pdf', [BulkPDFController::class, 'generate'])->name('generate.bulk.pdf');
 
 
 //

@@ -7,7 +7,31 @@
     // $rooms = collect($rooms)->slice(0, 3);
     // print_r(json_encode($rooms));
 @endphp
+<style>
+    a-scene {
+        width: 100%;
+        /* Mengatur lebar */
+        height: 100%;
+        position: absolute
+            /* Mengatur tinggi */
+    }
 
+    /* .aframe-container {
+        width: 50%;
+        /* Atur lebar sesuai kebutuhan */
+    height: 300px;
+    /* Atur tinggi sesuai kebutuhan */
+    margin: 0 auto;
+    /* Agar scene berada di tengah */
+    border: 1px solid #ccc;
+    /* Opsional: tambahkan border */
+    }
+
+    */
+</style>
+
+
+<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 <x-header />
 
 <div class="flex justify-between items-center flex-col w-full pt-10 my-20">
@@ -17,7 +41,7 @@
         <!-- First row: 6 rooms -->
         @if (isset($rooms))
             @if (isset($rooms[0]))
-                <div class="w-20 h-20 border border-black flex justify-center items-center room font-bold"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
                     style="background-image: url('{{ $rooms[0]['path'] }}'); background-size: cover; background-position: center;"
                     data-id="{{ $rooms[0]['id'] }}" data-modal-target="default-modal" data-modal-toggle="default-modal">
                     {{ $rooms[0]['name'] }}
@@ -25,7 +49,7 @@
             @endif
 
             @if (isset($rooms[1]))
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
                     style="background-image: url('{{ $rooms[1]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[1]['id'] }}">
                     <span class="font-bold">{{ $rooms[1]['name'] }}</span>
@@ -33,7 +57,7 @@
             @endif
 
             @if (isset($rooms[2]))
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
                     style="background-image: url('{{ $rooms[2]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[2]['id'] }}">
                     <span class="font-bold">{{ $rooms[2]['name'] }}</span>
@@ -41,7 +65,7 @@
             @endif
 
             @if (isset($rooms[3]))
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
                     style="background-image: url('{{ $rooms[3]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[3]['id'] }}">
                     <span class="font-bold">{{ $rooms[3]['name'] }}</span>
@@ -49,7 +73,7 @@
             @endif
 
             @if (isset($rooms[4]))
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
                     style="background-image: url('{{ $rooms[4]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[4]['id'] }}">
                     <span class="font-bold">{{ $rooms[4]['name'] }}</span>
@@ -57,7 +81,7 @@
             @endif
 
             @if (isset($rooms[5]))
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
                     style="background-image: url('{{ $rooms[5]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[5]['id'] }}">
                     <span class="font-bold">{{ $rooms[5]['name'] }}</span>
@@ -66,7 +90,7 @@
 
             @if (isset($rooms[6]))
                 <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room col-start-1 col-end-2"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-1 col-end-2"
                     style="background-image: url('{{ $rooms[6]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[6]['id'] }}">
                     <span class="font-bold">{{ $rooms[6]['name'] }}</span>
@@ -80,7 +104,7 @@
 
             @if (isset($rooms[7]))
                 <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room col-start-6 col-end-7"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-6 col-end-7"
                     style="background-image: url('{{ $rooms[7]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[7]['id'] }}">
                     <span class="font-bold">{{ $rooms[7]['name'] }}</span>
@@ -90,7 +114,7 @@
             <!-- Third row: room in the first column, room in the sixth column -->
             @if (isset($rooms[8]))
                 <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room col-start-1 col-end-2"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-1 col-end-2"
                     style="background-image: url('{{ $rooms[8]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[8]['id'] }}">
                     <span class="font-bold">{{ $rooms[8]['name'] }}</span>
@@ -100,13 +124,24 @@
 
             @if (isset($rooms[9]))
                 <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center room col-start-6 col-end-7"
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-6 col-end-7"
                     style="background-image:
                     url('{{ $rooms[9]['path'] }}'); background-size: cover; background-position: center;"
                     data-modal-target="default-modal" data-modal-toggle="default-modal"data-id="{{ $rooms[9]['id'] }}">
                     <span class="font-bold">{{ $rooms[9]['name'] }}</span>
                 </div>
             @endif
+
+            {{-- @if (isset($rooms[10]))
+                <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
+                <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-6 col-end-7"
+                    style="background-image:
+                    url('{{ $rooms[10]['path'] }}'); background-size: cover; background-position: center;"
+                    data-modal-target="default-modal"
+                    data-modal-toggle="default-modal"data-id="{{ $rooms[10]['id'] }}">
+                    <span class="font-bold">{{ $rooms[10]['name'] }}</span>
+                </div>
+            @endif --}}
 
             <div class="w-full h-12 bg-blue-500 border border-black col-span-6 room flex items-center justify-center">
                 Parking Lot
@@ -136,17 +171,8 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="p-4 md:p-5 space-y-4" id="modalContent">
-                    {{-- <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        With less than a month to go before the European Union enacts new consumer privacy laws for its
-                        citizens, companies around the world are updating their terms of service agreements to comply.
-                    </p>
-                    <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                        The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25
-                        and is meant to ensure a common set of data rights in the European Union. It requires
-                        organizations to notify users as soon as possible of high-risk data breaches that could
-                        personally affect them.
-                    </p> --}}
+                <div class="p-4 md:p-5 space-y-4 aframe-container" id="modalContent">
+
                 </div>
                 <!-- Modal footer -->
                 <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600"
@@ -175,17 +201,24 @@
     document.querySelectorAll('[data-id]').forEach(button => {
         button.addEventListener('click', async () => {
             const roomId = button.getAttribute('data-id');
+            // location.replace(`/room/vr/${roomId}`);
             const vr = await getVr(roomId)
             modalTitle.textContent = `Tampilan VR Ruang ${roomId}`
-            modalContent.innerHTML = `
-                <img src="${vr.path}"/>
-            `
+            // console.log(vr)
+
+
+
+            // // Tambahkan komponen resizer untuk merender ulang
+
             modalButton.innerHTML = `<a href="/room/${roomId}" type="button"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Detail room</a>
-                    <button data-modal-hide="default-modal" type="button"
-                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
-            `
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Detail room</a> 
+                            <a href="/room/vr/${vr}" type="button"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Detail room</a>
+                        <button data-modal-hide="default-modal" type="button"
+                            class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Cancel</button>
+                `
         });
     });
 </script>

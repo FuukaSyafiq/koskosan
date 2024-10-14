@@ -5,10 +5,10 @@
     <div class="flex-grow w-full flex justify-center items-center">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
             @foreach ($rooms as $item)
-                <x-room :data="$item" />
+                <x-tiperoom :data="$item" />
             @endforeach
         </div>
     </div>
-    
+
     <x-footer />
 </div>

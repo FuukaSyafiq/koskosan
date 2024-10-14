@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TipeRoomResource\Pages;
 use App\Filament\Resources\TipeRoomResource\RelationManagers;
+use App\Helpers\DeleteImages;
 use App\Models\TipeRoom;
+use App\Models\Role;
 use Filament\Forms;
 use App\Models\Image;
 use Filament\Forms\Form;
@@ -17,6 +19,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TipeRoomResource extends Resource
@@ -25,6 +28,34 @@ class TipeRoomResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Room management';
+
+    public static function canView(Model $record): bool
+    {
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+    }
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+    }
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()->role->id !== Role::getIdByRole('PENYEWA');
+    }
 
     public static function form(Form $form): Form
     {
@@ -41,6 +72,7 @@ class TipeRoomResource extends Resource
                     ->prefix('Rp.')
                     ->suffix('/Bulan'),
                 FileUpload::make('image')
+                    ->required(fn($livewire) => !$livewire->record)
                     ->directory("Image") // Enable multiple file uploads
                     ->image() // Specify that the upload is for images
                 // ->required() // Optional: Make the field required
@@ -61,9 +93,9 @@ class TipeRoomResource extends Resource
                     ->label('Harga'),
                 ImageColumn::make('')
                     ->size(50)
-                    ->label('Foto Ruang') ->getStateUsing(callback: function ($record) {
+                    ->label('Foto Ruang')->getStateUsing(callback: function ($record) {
                         $image = Image::where('tipe_room_id', $record->id)->first();
-                        
+
                         // Check if $image is not null and has a path
                         return $image && $image->path ? url($image->path) : '';
                     })
@@ -84,7 +116,7 @@ class TipeRoomResource extends Resource
 
                                 // Hapus file gambar menggunakan helper DeleteImages (pastikan helper sudah ada)
                                 if ($image) {
-                                    DeleteImages($image->file_name);
+                                    DeleteImages::DeleteImages($image->file_name);
                                 }
 
                                 // Hapus record dari tabel
