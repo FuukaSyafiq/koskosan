@@ -27,9 +27,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 //pdf
-Route::get('download/{id}', [PDFController::class, 'transactionpdf'])->name('download.pdf');
 // Route::post('/generate-bulk-pdf', [BulkPDFController::class, 'generate'])->name('generate.bulk.pdf');
-
+// Route::get('download/transaction/{id}', [PDFController::class, 'transactionpdf'])->name('transaction.pdf');
+/*Tagihan PDF */
+Route::get('download/tagihan/{id}', [PDFController::class, 'tagihanpdf'])->name('tagihan.pdf');
+/*Transaction history PDF */
+Route::get('download/all-transactions', [PDFController::class, 'allTransactionPdf'])->name('transaction.all.pdf');
+Route::get('download/all-user-transactions', [PDFController::class, 'allUserTransactionPdf'])->name('transaction.all.user.pdf');
+Route::get('download/selected-user-transactions', [PDFController::class, 'allSelectedUserTransactionPdf'])->name('transaction.select.user.pdf');
 
 //
 Route::get('/', [IndexController::class, 'gets'])->name('index');

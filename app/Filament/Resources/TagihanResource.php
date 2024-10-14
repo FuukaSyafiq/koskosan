@@ -166,7 +166,12 @@ class TagihanResource extends Resource
                         ]
                     ))
                     ->visible(fn(Tagihan $record): bool => $record->is_settled === false)
+                    ->color('success')
                     ->icon('heroicon-o-credit-card'),
+                Action::make('Cetak')
+                    ->url(fn(Tagihan $record) => route('tagihan.pdf', $record))
+                    ->visible(fn(Tagihan $record): bool => $record->is_settled === false)
+                    ->openUrlInNewTab(),    
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

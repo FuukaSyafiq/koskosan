@@ -95,9 +95,9 @@ class TransactionResource extends Resource
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
-                Action::make('Cetak')
-                    ->url(fn(VerifikasiPembayaran $record) => route('download.pdf', $record))
-                    ->openUrlInNewTab(),
+                // Action::make('Cetak')
+                //     ->url(fn(VerifikasiPembayaran $record) => route('transaction.pdf', $record))
+                //     ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),
