@@ -41,6 +41,10 @@
                 @endforeach
             </tbody>
         </table>
+
+        {{-- @for ($i = 1; $i <= 100; $i++)
+        <div style="margin-bottom:5px;">Test {{ $i }}</div>
+        @endfor --}}
     </div>
 </body>
 

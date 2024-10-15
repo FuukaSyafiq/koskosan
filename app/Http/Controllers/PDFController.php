@@ -15,6 +15,7 @@ use Barryvdh\DomPDF\PDF;
 
 class PDFController extends Controller
 {
+    //Contoh pdf dengan fitur render gambar dari DB
     public function transactionpdf($id)
     {
         // Get transaction (single)
@@ -81,6 +82,7 @@ class PDFController extends Controller
     // Fetch transactions based on 'pengirim' or fetch all if 'All' is selected
     if ($pengirim === 'all') {
         $transactions = VerifikasiPembayaran::where('is_valid', true)->get();
+
     } else {
         $transactions = VerifikasiPembayaran::where('pengirim', $pengirim)
                                             ->where('is_valid', true)
@@ -95,8 +97,14 @@ class PDFController extends Controller
 }
     public function allUserTransactionPdf()
     {
-     // Fetch all valid transactions for the user
-     $transactions = VerifikasiPembayaran::all()->where('is_valid', true);
+      // Get the authenticated user's name
+      $pengirim = auth()->user()->name;
+
+      // Fetch all valid transactions for the user
+      $transactions = VerifikasiPembayaran::where('pengirim', $pengirim)
+                                 ->where('is_valid', true)
+                                 ->get();
+     
     // return $transactions;
     //  Load the view for the PDF with all transactions
      $pdf = FacadePdf::loadView('pdf.UserTransactionHistory', ['records' => $transactions]);

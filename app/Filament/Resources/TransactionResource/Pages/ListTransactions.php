@@ -7,6 +7,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use App\Models\VerifikasiPembayaran;
 use App\Models\Role;
+use Filament\Facades\Filament;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -31,7 +32,8 @@ class ListTransactions extends ListRecords
                 Actions\ButtonAction::make('Cetak Semua Transaksi')
                 ->url(fn() => route('transaction.all.user.pdf'))
                 ->visible(fn() => auth()->user()->role_id === Role::getIdByRole("PENYEWA") && VerifikasiPembayaran::where('pengirim', auth()->user()->name)->where('is_valid', true)->exists())
-                ->openUrlInNewTab(),
+                ->openUrlInNewTab()
+                ,
 
                 Actions\ButtonAction::make('Cetak Semua Transaksi')
                 ->form([
@@ -44,19 +46,10 @@ class ListTransactions extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    // Handle the logic based on the selected 'pengirim'
-                    if ($data['pengirim'] === 'all') {
-                        $transactions = VerifikasiPembayaran::where('is_valid', true)->get();
-                    } else {
-                        $transactions = VerifikasiPembayaran::where('pengirim', $data['pengirim'])
-                                                            ->where('is_valid', true)
-                                                            ->get();
-                    }
-            
-                    // Assuming you redirect or handle PDF generation based on $transactions
-                    // Example: Redirect to a custom route for PDF generation
-                    return redirect()->route('transaction.select.user.pdf', ['records' => $transactions]);
+                    //send the value of "select" form to be used in PDFController query
+                    return redirect()->route('transaction.select.user.pdf', ['pengirim' =>$data['pengirim']]);
                 })
+                ->visible(fn() => auth()->user()->role_id === Role::getIdByRole("OWNER") && VerifikasiPembayaran::where('is_valid', true)->exists())
         ];
     }
 
