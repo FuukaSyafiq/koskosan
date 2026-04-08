@@ -104,7 +104,7 @@ class PaymentResource extends Resource
                     ->default(fn () => Request::query('amount')),
                 Section::make('lampiran')
                     ->schema([
-                        FileUpload::make('invoice_file')
+                        FileUpload::make('bukti_file')
                             ->required()
                             ->label('Bukti pembayaran')
                             ->required(fn ($get) => auth()->user()->role_id === Role::getIdByRole('PENYEWA'))

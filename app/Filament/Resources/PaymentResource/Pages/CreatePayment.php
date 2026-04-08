@@ -7,7 +7,6 @@ use App\Helpers\DeleteImages;
 use App\Helpers\GenerateMessage;
 use App\Helpers\Invoice;
 use App\Helpers\Sender;
-use App\Helpers\StoreImages;
 use App\Models\RentedRoom;
 use App\Models\Role;
 use App\Models\Room;
@@ -74,7 +73,7 @@ class CreatePayment extends CreateRecord
                     'tanggal_notif' => Carbon::parse($tagihanJatuhtempoTerakhir->due_date)->addDays(25),  // 25 days from now
                 ]);
 
-                $buktiPembayaran = StoreImages::StoreImages($data['invoice_file']);
+	    $buktiPembayaran = $data['bukti_file'];
 
                 VerifikasiPembayaran::create([
                     'is_valid' => true,
@@ -93,7 +92,7 @@ class CreatePayment extends CreateRecord
 
             $roomYangDisewa = Room::where('id', $rentedRoom->room_id)->first();
 
-            $buktiFile = StoreImages::StoreImages($data['invoice_file']);
+	    $buktiFile = $data['bukti_file'];
 
             VerifikasiPembayaran::create([
                 'is_valid' => false,
@@ -110,7 +109,6 @@ class CreatePayment extends CreateRecord
             return $user;
         } catch (\Exception $e) {
             DB::rollBack();
-            DeleteImages::DeleteImages($data['invoice_file']);
 
             throw $e;
         }

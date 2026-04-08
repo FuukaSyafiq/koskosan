@@ -75,7 +75,7 @@ class TransactionResource extends Resource
                 TextColumn::make('no_invoice')->label('No Invoice'),
                 TextColumn::make('updated_at')->label('Tanggal diverifikasi')->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
                 TextColumn::make('tanggal_dibayar')->label('Tanggal dibayar')->formatStateUsing(fn ($state) => Carbon::parse($state)->translatedFormat('d F Y')),
-                ImageColumn::make('bukti_file')
+                ImageColumn::make('bukti_file')->disk('s3')
                     ->label('Invoice')->disk('s3'),
 
             ])

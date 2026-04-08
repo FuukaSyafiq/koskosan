@@ -19,10 +19,9 @@ return new class extends Migration
             $table->date("tanggal_dibayar");
             $table->string("no_invoice");
             $table->boolean("is_valid");
-            $table->unsignedInteger("bukti_file")->nullable();
+            $table->string("bukti_file")->nullable();
             $table->timestamps();
 
-            $table->foreign("bukti_file")->references("id")->on("images")->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
+use Illuminate\Support\Facades\Hash;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -141,8 +142,10 @@ class UserResource extends Resource
                             ->email()
                             ->required(),
                         TextInput::make('password')
-                            ->password()
-                            ->required(),
+				->password()
+				->required(fn (string $context): bool => $context === 'create')
+			->dehydrated(fn ($state) => filled($state))
+			->dehydrateStateUsing(fn ($state) => Hash::make($state)),
                     ])->columns(2),
                 Section::make('lampiran')
                     ->schema([

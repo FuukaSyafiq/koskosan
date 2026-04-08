@@ -3,7 +3,8 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\File\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\UploadedFile;
 
 class StoreImages
 {
@@ -11,16 +12,24 @@ class StoreImages
     {
         if (! $file) {
             return null;
+	}
+
+	if ($file instanceof UploadedFile) {
+            return Storage::disk('s3')->put($directory, $file);
         }
 
-        if ($file instanceof File) {
-            $path = Storage::disk('s3')->put($directory, $file);
-
-            return $directory.'/'.$file->getFilename();
-        }
-
-        if (is_string($file) && Storage::disk('s3')->exists($file)) {
-            return $file;
+        // 2. Jika ini adalah string (misal pengecekan data lama di DB)
+        if (is_string($file)) {
+            try {
+                // Bungkus exists() dengan try-catch agar tidak crash jika koneksi/prefix bermasalah
+                if (Storage::disk('s3')->exists($file)) {
+                    return $file;
+                }
+            } catch (\Exception $e) {
+                // Jika folder belum ada atau koneksi gagal, anggap file tidak ada
+                Log::warning("S3 Check Failed for $file: " . $e->getMessage());
+                return null;
+            }
         }
 
         return null;
