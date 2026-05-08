@@ -27,7 +27,38 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-      - postgresdb:/var/lib/postgresql/data
+      - postgresdb:/var/lib/postgresql
+
+   loki:
+    image: grafana/loki:latest
+    container_name: ayongekost-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - ayongekost
+
+   promtail:
+    image: grafana/promtail:latest
+    container_name: ayongekost-promtail
+    volumes:
+      - ./storage/logs:/var/log/laravel
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - ayongekost
+    depends_on:
+      - loki
+
+   grafana:
+    image: grafana/grafana:latest
+    container_name: ayongekost-grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - ayongekost
+    depends_on:
+      - loki
 
 networks:
    ayongekost:

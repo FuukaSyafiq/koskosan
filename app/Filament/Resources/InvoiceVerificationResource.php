@@ -39,6 +39,11 @@ class InvoiceVerificationResource extends Resource
         return false;
     }
 
+    public static function canViewAny(): bool
+    {
+        return Role::getIdByRole('OWNER') == auth()->user()->role_id;
+    }
+
     public static function canEdit(Model $record): bool
     {
         return false;
@@ -118,6 +123,12 @@ class InvoiceVerificationResource extends Resource
                                 'is_valid' => true,
                             ]);
 
+                            \App\Models\Pendapatan::create([
+                                'transaksi_id' => $record->id,
+                                'tanggal' => $record->tanggal_dibayar,
+                                'keuntungan' => $record->amount,
+                            ]);
+
                             $tagihanJatuhtempoTerakhir = Tagihan::where('rented_room_id', $rentedRoom->id)->orderBy('due_date', 'desc')->first();
 
                             $invoice = Invoice::GenerateInvoiceNumber();
@@ -135,6 +146,15 @@ class InvoiceVerificationResource extends Resource
                             $message = GenerateMessage::whenIsVerified($tanggalTagihan, $room->name, $tagihan->amount);
                             Sender::SendToWhatsapp($user->contact, $message);
                             DB::commit();
+
+                            Log::info('Payment verified successfully', [
+                                'event' => 'payment_verified',
+                                'actor_id' => auth()->user()->id,
+                                'pengirim' => $record->pengirim,
+                                'no_invoice' => $record->no_invoice,
+                                'amount' => $record->amount,
+                                'room' => $record->room,
+                            ]);
                         } catch (\Exception $e) {
                             DB::rollBack();
                             throw $e;

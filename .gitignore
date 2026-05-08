@@ -1,6 +1,5 @@
-tes/*
-/.phpunit.cache
 /node_modules
+/bootstrap/cache/*
 /public/build
 /public/hot
 /public/storage
@@ -9,6 +8,23 @@ tes/*
 .env
 .env.backup
 .env.production
+composer.lock
+package-lock.json
+/storage/framework/cache/data/*
+!/storage/framework/cache/data/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/app/public/*
+!/storage/app/public/.gitignore
+
+# Project specific
+tes/*
 Homestead.json
 Homestead.yaml
 auth.json
@@ -19,3 +35,4 @@ yarn-error.log
 /.vscode
 scripts/*
 kosloka.zip
+/promtail-config.yaml

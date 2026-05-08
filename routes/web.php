@@ -38,6 +38,7 @@ Route::get('download/buktibayar/{id}', [PDFController::class, 'cetakbuktibayar']
 // Route::get('download/all-user-transactions', [PDFController::class, 'allUserTransactionPdf'])->name('transaction.all.user.pdf');
 // Route::get('download/selected-user-transactions', [PDFController::class, 'allSelectedUserTransactionPdf'])->name('transaction.select.user.pdf');
 Route::get('download/kuitansi/{id}', [PDFController::class, 'cetak'])->name('transaction.settled.pdf');
+Route::get('download/pendapatan-pdf', [PDFController::class, 'cetakPendapatanPdf'])->name('pendapatan.cetak.pdf');
 
 //
 Route::get('/', [IndexController::class, 'gets'])->name('index');

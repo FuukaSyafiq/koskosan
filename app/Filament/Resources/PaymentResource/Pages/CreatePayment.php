@@ -75,7 +75,7 @@ class CreatePayment extends CreateRecord
 
 	    $buktiPembayaran = $data['bukti_file'];
 
-                VerifikasiPembayaran::create([
+                $vp = VerifikasiPembayaran::create([
                     'is_valid' => true,
                     'pengirim' => $user->name,
                     'amount' => $data['tagihan'],
@@ -85,7 +85,21 @@ class CreatePayment extends CreateRecord
                     'bukti_file' => $buktiPembayaran,
                 ]);
 
+                \App\Models\Pendapatan::create([
+                    'transaksi_id' => $vp->id,
+                    'tanggal' => $vp->tanggal_dibayar,
+                    'keuntungan' => $vp->amount,
+                ]);
+
                 DB::commit();
+
+                Log::info('Manual payment created by Owner', [
+                    'event' => 'manual_payment_created',
+                    'actor_id' => auth()->user()->id,
+                    'user_name' => $user->name,
+                    'no_invoice' => $tagihanYangAkanDibayar->no_invoice,
+                    'amount' => $tagihanYangAkanDibayar->amount,
+                ]);
 
                 return $user;
             }

@@ -77,12 +77,22 @@ class CreateRentedRoom extends CreateRecord
                 ]);
 
                 $record->save();
-
                 DB::commit();
+
+                Log::info('Room rented successfully', [
+                    'event' => 'room_rented',
+                    'user_id' => auth()->user()->id,
+                    'user_name' => auth()->user()->name,
+                    'room_id' => $data['room_id'],
+                    'invoice_number' => $no_invoice,
+                    'amount' => $tipeRoom->price,
+                ]);
+
                 return $record;
             }
 
             $userId = $data['user_id'];
+            $targetUser = User::find($userId);
             $record = static::getModel()::create([
                 "user_id" => $userId,
                 "room_id" => $data['room_id'],
@@ -117,6 +127,16 @@ class CreateRentedRoom extends CreateRecord
             // dd($record);
             $record->save();
             DB::commit();
+
+            Log::info('Room rented successfully (by Owner)', [
+                'event' => 'room_rented',
+                'actor_id' => auth()->user()->id,
+                'target_user_id' => $userId,
+                'target_user_name' => $targetUser?->name,
+                'room_id' => $data['room_id'],
+                'invoice_number' => $no_invoice,
+                'amount' => $tipeRoom->price,
+            ]);
 
             return $record;
         } catch (\Exception $e) {

@@ -204,4 +204,19 @@ class PDFController extends Controller
         // return $pdf->download('tagihan-' . $tagihan->id . '.pdf');
         return $pdf->stream('tagihan.pdf');
     }
+
+    public function cetakPendapatanPdf(Request $request)
+    {
+        $ids = explode(',', $request->get('ids'));
+        $records = \App\Models\Pendapatan::whereIn('id', $ids)->get();
+
+        $data = [
+            'records' => $records,
+            'start_date' => $request->get('start_date'),
+            'end_date' => $request->get('end_date'),
+        ];
+
+        $pdf = FacadePdf::loadView('pdf.PendapatanReport', $data);
+        return $pdf->stream('laporan-pendapatan.pdf');
+    }
 }
