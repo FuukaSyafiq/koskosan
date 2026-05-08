@@ -27,7 +27,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-      - postgresdb:/var/lib/postgresql
+      - postgresayongekost:/var/lib/postgresql
 
    loki:
     image: grafana/loki:latest
@@ -65,5 +65,5 @@ networks:
 
 volumes:
   miniodata:
-  postgresdb:
+  postgresayongekost:
 

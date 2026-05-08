@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pendapatan', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('transaksi_id');
+            $table->unsignedBigInteger('transaksi_id');
             $table->date('tanggal');
             $table->decimal('keuntungan', 12, 2)->default(0);
             $table->timestamps();

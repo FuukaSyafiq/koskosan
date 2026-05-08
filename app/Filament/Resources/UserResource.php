@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Helpers\DeleteImages;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
@@ -40,80 +39,39 @@ class UserResource extends Resource
         return 'users';
     }
 
-    private static function checkPermission(string $action): bool
-    {
-        $permission = Permission::getPermissionByUserAndPermissionAndAction('User', $action);
-
-        return isset($permission) && $permission->action;
-    }
-
     public static function canView(Model $record): bool
     {
-        $canSeeProfile = self::checkPermission('VIEWPAGE');
-
-        if ($canSeeProfile) {
-            return true;
-        }
-
-        return false;
+        return auth()->user()->role->id === Role::getIdByRole('OWNER') || auth()->id() === $record->id;
     }
 
     public static function canAccess(): bool
     {
-        $canView = self::checkPermission('ACCESS');
-
-        if ($canView) {
-            return true;
-        }
-
         return true;
     }
 
     public static function canViewAny(): bool
     {
-        $canView = self::checkPermission('READ');
-
-        if (! $canView) {
-            return false;
-        }
-
         return true;
     }
 
     public static function canCreate(): bool
     {
-        if (! self::canViewAny()) {
-            return false;
-        }
-
-        return self::checkPermission('CREATE');
+        return auth()->user()->role->id === Role::getIdByRole('OWNER');
     }
 
     public static function canEdit(Model $record): bool
     {
-        if (! self::canViewAny()) {
-            return false;
-        }
-
-        return self::checkPermission('UPDATE');
+        return auth()->user()->role->id === Role::getIdByRole('OWNER') || auth()->id() === $record->id;
     }
 
     public static function canDeleteAny(): bool
     {
-        if (! self::canViewAny()) {
-            return false;
-        }
-
-        return self::checkPermission('DELETE');
+        return auth()->user()->role->id === Role::getIdByRole('OWNER');
     }
 
     public static function canDelete(Model $record): bool
     {
-        if (! self::canViewAny()) {
-            return false;
-        }
-
-        return self::checkPermission('DELETE');
+        return auth()->user()->role->id === Role::getIdByRole('OWNER');
     }
 
     public static function getTitle(): string
@@ -162,6 +120,9 @@ class UserResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function ($query) {
+                if (auth()->user()->role->id === Role::getIdByRole('PENYEWA')) {
+                    return $query->where('id', auth()->id());
+                }
                 return $query->where('role_id', Role::getIdByRole('PENYEWA'));
             })
             ->columns([

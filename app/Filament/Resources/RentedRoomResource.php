@@ -5,24 +5,18 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\RentedRoomResource\Pages;
 use App\Models\RentedRoom;
 use App\Models\Role;
-use App\Models\Permission;
 use App\Models\Room;
-use App\Models\Tagihan;
 use Carbon\Carbon;
-use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 class RentedRoomResource extends Resource
 {

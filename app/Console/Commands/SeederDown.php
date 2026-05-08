@@ -11,7 +11,7 @@ class SeederDown extends Command
      *
      * @var string
      */
-    protected $signature = 'db:seed-down {--class=InitSeeder}';
+    protected $signature = 'db:seed-down {--class=DatabaseSeeder}';
 
     /**
      * The console command description.
@@ -34,7 +34,7 @@ class SeederDown extends Command
     public function handle()
     {
 
-        $seeder = $this->option('class') ?? 'InitSeeder';
+        $seeder = $this->option('class') ?? 'DatabaseSeeder';
 
         $seederClass = "Database\\Seeders\\{$seeder}";
         if (class_exists($seederClass)) {
