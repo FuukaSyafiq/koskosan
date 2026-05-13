@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
     <link rel="icon" href="https://tenor.com/id/view/black-hot-mafia-kardiya-gif-25072254" type="image/png" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
     </style>
  @vite('resources/css/app.css')
@@ -31,7 +32,7 @@ input::-webkit-inner-spin-button {
 }
 </style>
 
-<nav class="w-full mt-2 border-gray-200 dark:bg-gray-900 rounded-md text-white">
+<nav class="w-full mt-2 py-2 px-3 rounded-md text-white">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <a href="{{ route('index') }}" class="flex w-1/5 items-center">
             <span class="self-center text-2xl text-lime-600 font-semibold whitespace-nowrap ml-1">{{config('app.name')}}</span>

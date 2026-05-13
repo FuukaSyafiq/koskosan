@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Notifications\Notification; // Import Notification
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -36,6 +37,15 @@ class RentedRoomResource extends Resource
 
     public static function canCreate(): bool
     {
+        if (auth()->user()->role->id == Role::getIdByRole('PENYEWA') && !auth()->user()->ktp_url) {
+            Notification::make()
+                ->title('Perhatian: KTP Belum Lengkap')
+                ->body('Untuk menyewa ruang kos diharuskan untuk melengkapi foto KTP dengan menghubungi pemilik kos.')
+                ->warning()
+                ->persistent() // Agar notifikasi tidak hilang sendiri sebelum ditutup
+                ->send();
+            return false;
+        }
         return true;
     }
 

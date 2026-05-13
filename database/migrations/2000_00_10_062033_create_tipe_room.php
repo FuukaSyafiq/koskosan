@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('tipe')->unique();
             $table->string('facility');
+            $table->string('image')->nullable();
             $table->string('ukuran')->nullable();
             $table->unsignedInteger('price');
         });

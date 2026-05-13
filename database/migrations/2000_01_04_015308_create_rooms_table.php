@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->boolean('available')->default(false);
             $table->unsignedInteger('tipe_room_id');
+            $table->string('image')->nullable();
+            $table->string('image_vr')->nullable();
             $table->string('description');
             $table->string('address');
             $table->timestamps();

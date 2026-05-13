@@ -17,13 +17,12 @@ return new class extends Migration {
             $table->unsignedInteger('role_id');
             $table->string('password');
             $table->string('contact');
+            $table->string('ktp_url')->nullable();
             $table->string('address');
-            $table->unsignedInteger('ktp_id')->nullable();
             $table->rememberToken()->nullable();
             $table->timestamps();
 
             $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreign('ktp_id')->references('id')->on('images')->cascadeOnDelete()->cascadeOnUpdate();
         });
 
 

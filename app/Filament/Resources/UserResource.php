@@ -36,7 +36,7 @@ class UserResource extends Resource
             return 'Profile';
         }
 
-        return 'users';
+        return 'Penyewa';
     }
 
     public static function canView(Model $record): bool
@@ -46,12 +46,13 @@ class UserResource extends Resource
 
     public static function canAccess(): bool
     {
-        return true;
+        return auth()->user()->role_id === Role::getIdByRole('OWNER');
+
     }
 
     public static function canViewAny(): bool
     {
-        return true;
+        return auth()->user()->role_id === Role::getIdByRole('OWNER');
     }
 
     public static function canCreate(): bool
@@ -109,7 +110,6 @@ class UserResource extends Resource
                     ->schema([
                         FileUpload::make('ktp_url')
                             ->label('KTP')
-                            ->required(fn ($livewire) => ! $livewire->record)
                             ->directory('KTP')
                             ->disk('s3'),
                     ]),
@@ -182,18 +182,16 @@ class UserResource extends Resource
         return $infolist
             ->schema([
                 TextEntry::make('name')
-                    ->label('nama'),
+                    ->label('Nama'),
                 TextEntry::make('email')
-                    ->label('email'),
+                    ->label('Email'),
                 TextEntry::make('contact')
-                    ->label('contact'),
+                    ->label('Kontak'),
                 TextEntry::make('address')
                     ->label('Alamat'),
                 ImageEntry::make('ktp_url')
                     ->label('KTP')
                     ->disk('s3')
-                    ->width('100')
-                    ->height('50'),
             ]);
     }
 }

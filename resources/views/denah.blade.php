@@ -1,12 +1,10 @@
 @php
-    use App\Models\Tiperoom;
     use App\Models\Room;
     use Illuminate\Support\Facades\Storage;
 
     $roomsAyoNgekostIbuSri = Room::getAllRoomInAddress('AyoNgekost Ibu Sri');
     $roomsTesting = Room::getAllRoomInAddress('tes');
 
-    // Convert all room images to S3 URLs
     $roomsAyoNgekostIbuSri = $roomsAyoNgekostIbuSri->map(function ($room) {
         $room['image'] = $room->image ? Storage::disk('s3')->url($room->image) : asset('images/no-image.png');
         return $room;
@@ -17,229 +15,245 @@
         return $room;
     });
 @endphp
-<style>
 
+<style>
+    .room-card {
+        transition: all 0.3s ease;
+    }
+    .room-card:hover {
+        transform: scale(1.05);
+        z-index: 10;
+    }
+    .room-card:hover .room-overlay {
+        opacity: 1;
+    }
 </style>
 
 <x-header />
 
-@if (isset($roomsAyoNgekostIbuSri[0]['address']))
-    <div class="flex justify-between items-center flex-col w-full pt-10 my-20">
-        <h1 class="font-bold text-3xl">Ini Denah Ruang {{ $roomsAyoNgekostIbuSri[0]['address'] }}</h1>
-
-        <div class="grid grid-cols-6 gap-2 my-20" id="denah">
-            <!-- First row: 6 roomsAyoNgekostIbuSri -->
-            @if (isset($roomsAyoNgekostIbuSri))
-                @if (isset($roomsAyoNgekostIbuSri[0]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[0]['image'] }}'); background-size: cover; background-position: center;"
-                        data-id="{{ $roomsAyoNgekostIbuSri[0]['id'] }}" data-modal-target="default-modal"
-                        data-modal-toggle="default-modal">
-                        {{ $roomsAyoNgekostIbuSri[0]['name'] }}
-                    </div>
-                @endif
-
-                @if (isset($roomsAyoNgekostIbuSri[1]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[1]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[1]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[1]['name'] }}</span>
-                    </div>
-                @endif
-
-                @if (isset($roomsAyoNgekostIbuSri[2]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[2]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[2]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[2]['name'] }}</span>
-                    </div>
-                @endif
-
-                @if (isset($roomsAyoNgekostIbuSri[3]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[3]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[3]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[3]['name'] }}</span>
-                    </div>
-                @endif
-
-                @if (isset($roomsAyoNgekostIbuSri[4]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[4]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[4]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[4]['name'] }}</span>
-                    </div>
-                @endif
-
-                @if (isset($roomsAyoNgekostIbuSri[5]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[5]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[5]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[5]['name'] }}</span>
-                    </div>
-                @endif
-
-                @if (isset($roomsAyoNgekostIbuSri[6]))
-                    <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-1 col-end-2"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[6]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[6]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[6]['name'] }}</span>
-                    </div>
-                @endif
-
-                <div
-                    class="w-full h-full bg-green-500 border border-black room col-start-2 col-end-6 row-span-2 flex items-center justify-center">
-                    Field
-                </div>
-
-                @if (isset($roomsAyoNgekostIbuSri[7]))
-                    <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-6 col-end-7"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[7]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[7]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[7]['name'] }}</span>
-                    </div>
-                @endif
-
-                <!-- Third row: room in the first column, room in the sixth column -->
-                @if (isset($roomsAyoNgekostIbuSri[8]))
-                    <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-1 col-end-2"
-                        style="background-image: url('{{ $roomsAyoNgekostIbuSri[8]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[8]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[8]['name'] }}</span>
-                    </div>
-                @endif
-
-
-                @if (isset($roomsAyoNgekostIbuSri[9]))
-                    <!-- Second row: room in the first column, 'Field' spanning 4 columns, room in the sixth column -->
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white col-start-6 col-end-7"
-                        style="background-image:
-                    url('{{ $roomsAyoNgekostIbuSri[9]['image'] }}'); background-size: cover; background-position: center;"
-                        data-modal-target="default-modal"
-                        data-modal-toggle="default-modal"data-id="{{ $roomsAyoNgekostIbuSri[9]['id'] }}">
-                        <span class="font-bold">{{ $roomsAyoNgekostIbuSri[9]['name'] }}</span>
-                    </div>
-                @endif
-
-                <div
-                    class="w-full h-12 bg-blue-500 border border-black col-span-6 room flex items-center justify-center">
-                    Parking Lot
-                </div>
-            @endif
+<div class="min-h-screen bg-gray-50">
+    {{-- Header --}}
+    <div class="bg-gradient-to-r from-lime-600 to-green-600 py-12">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h1 class="text-4xl sm:text-5xl font-bold text-white mb-3">Denah Kamar Kos</h1>
+            <p class="text-xl text-white/80">Peta lokasi kamar kos kami</p>
         </div>
+    </div>
 
-        <!-- Modal -->
-        <div id="default-modal" tabindex="-1" aria-hidden="true"
-            class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-sm max-h-full">
-                <!-- Adjusted modal width to max-w-sm for smaller size -->
-                <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white text-center" id="modalTitle">
-                            Modal Title
-                        </h3>
-                        <button type="button"
-                            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                            data-modal-hide="default-modal">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                        </button>
+    {{-- Floor Plan Section --}}
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        @if(isset($roomsAyoNgekostIbuSri[0]['address']))
+        <div class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">{{ $roomsAyoNgekostIbuSri[0]['address'] }}</h2>
+                <div class="flex gap-4 text-sm">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-lime-500 rounded mr-2"></div>
+                        <span>Tersedia</span>
                     </div>
-                    <!-- Modal body -->
-                    <div class="p-4 md:p-5 space-y-4" id="modalContent">
-                        <p>Pilih opsi detail yang tersedia</p>
-                        <div class="flex justify-center gap-4"> <!-- Flexbox to center buttons side by side -->
-                            <!-- Buttons will be injected here via JavaScript -->
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                        <span>Terisi</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Map Grid --}}
+            <div class="bg-white rounded-3xl shadow-lg p-8">
+                <div class="grid grid-cols-6 gap-4">
+                    {{-- Row 1: 6 rooms --}}
+                    @for($i = 0; $i < 6; $i++)
+                        @if(isset($roomsAyoNgekostIbuSri[$i]))
+                        <div class="room-card relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
+                             style="background-image: url('{{ $roomsAyoNgekostIbuSri[$i]['image'] }}'); background-size: cover; background-position: center;"
+                             data-id="{{ $roomsAyoNgekostIbuSri[$i]['id'] }}"
+                             data-name="{{ $roomsAyoNgekostIbuSri[$i]['name'] }}">
+                            <div class="room-overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center">
+                                <span class="text-white font-bold text-center">{{ $roomsAyoNgekostIbuSri[$i]['name'] }}</span>
+                            </div>
+                            <div class="absolute bottom-2 left-2 right-2">
+                                <span class="bg-black/70 text-white text-xs px-2 py-1 rounded block text-center">
+                                    {{ $roomsAyoNgekostIbuSri[$i]['name'] }}
+                                </span>
+                            </div>
+                        </div>
+                        @else
+                        <div class="aspect-square rounded-xl bg-gray-100"></div>
+                        @endif
+                    @endfor
+
+                    {{-- Row 2: Room + Field + Room --}}
+                    @if(isset($roomsAyoNgekostIbuSri[6]))
+                    <div class="room-card relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                         style="background-image: url('{{ $roomsAyoNgekostIbuSri[6]['image'] }}'); background-size: cover; background-position: center;"
+                         data-id="{{ $roomsAyoNgekostIbuSri[6]['id'] }}"
+                         data-name="{{ $roomsAyoNgekostIbuSri[6]['name'] }}">
+                        <div class="room-overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white font-bold">{{ $roomsAyoNgekostIbuSri[6]['name'] }}</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <span class="bg-black/70 text-white text-xs px-2 py-1 rounded block text-center">
+                                {{ $roomsAyoNgekostIbuSri[6]['name'] }}
+                            </span>
                         </div>
                     </div>
+                    @else
+                    <div class="aspect-square rounded-xl bg-gray-100"></div>
+                    @endif
+
+                    <div class="col-span-4 aspect-square rounded-xl bg-green-100 flex items-center justify-center">
+                        <div class="text-center">
+                            <svg class="w-8 h-8 text-green-500 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                            <span class="text-green-600 font-medium">Taman</span>
+                        </div>
+                    </div>
+
+                    @if(isset($roomsAyoNgekostIbuSri[7]))
+                    <div class="room-card relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                         style="background-image: url('{{ $roomsAyoNgekostIbuSri[7]['image'] }}'); background-size: cover; background-position: center;"
+                         data-id="{{ $roomsAyoNgekostIbuSri[7]['id'] }}"
+                         data-name="{{ $roomsAyoNgekostIbuSri[7]['name'] }}">
+                        <div class="room-overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white font-bold">{{ $roomsAyoNgekostIbuSri[7]['name'] }}</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <span class="bg-black/70 text-white text-xs px-2 py-1 rounded block text-center">
+                                {{ $roomsAyoNgekostIbuSri[7]['name'] }}
+                            </span>
+                        </div>
+                    </div>
+                    @else
+                    <div class="aspect-square rounded-xl bg-gray-100"></div>
+                    @endif
+
+                    {{-- Row 3: Room + Room --}}
+                    @if(isset($roomsAyoNgekostIbuSri[8]))
+                    <div class="room-card relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                         style="background-image: url('{{ $roomsAyoNgekostIbuSri[8]['image'] }}'); background-size: cover; background-position: center;"
+                         data-id="{{ $roomsAyoNgekostIbuSri[8]['id'] }}"
+                         data-name="{{ $roomsAyoNgekostIbuSri[8]['name'] }}">
+                        <div class="room-overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white font-bold">{{ $roomsAyoNgekostIbuSri[8]['name'] }}</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <span class="bg-black/70 text-white text-xs px-2 py-1 rounded block text-center">
+                                {{ $roomsAyoNgekostIbuSri[8]['name'] }}
+                            </span>
+                        </div>
+                    </div>
+                    @else
+                    <div class="aspect-square rounded-xl bg-gray-100"></div>
+                    @endif
+
+
+                    @if(isset($roomsAyoNgekostIbuSri[9]))
+                    <div class="room-card relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                         style="background-image: url('{{ $roomsAyoNgekostIbuSri[9]['image'] }}'); background-size: cover; background-position: center;"
+                         data-id="{{ $roomsAyoNgekostIbuSri[9]['id'] }}"
+                         data-name="{{ $roomsAyoNgekostIbuSri[9]['name'] }}">
+                        <div class="room-overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white font-bold">{{ $roomsAyoNgekostIbuSri[9]['name'] }}</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <span class="bg-black/70 text-white text-xs px-2 py-1 rounded block text-center">
+                                {{ $roomsAyoNgekostIbuSri[9]['name'] }}
+                            </span>
+                        </div>
+                    </div>
+                    @else
+                    <div class="aspect-square rounded-xl bg-gray-100"></div>
+                    @endif
                 </div>
             </div>
         </div>
+        @endif
 
-
-    </div>
-@endif
-
-@if (isset($roomsTesting[0]['address']))
-    <div class="flex justify-between items-center flex-col w-full pt-10 my-20">
-        <h1 class="font-bold text-3xl">Ini Denah Ruang
-            {{ $roomsTesting[0]['address'] ? $roomsTesting[0]['address'] : null }}</h1>
-
-        <div class="grid grid-cols-6 gap-2 my-20" id="denah">
-            <!-- First row: 6 roomsAyoNgekostIbuSri -->
-            @if (isset($roomsTesting))
-                @if (isset($roomsTesting[0]))
-                    <div class="w-20 h-20 bg-red-700 border border-black flex justify-center items-center text-white"
-                        style="background-image: url('{{ $roomsTesting[0]['image'] }}'); background-size: cover; background-position: center;"
-                        data-id="{{ $roomsTesting[0]['id'] }}" data-modal-target="default-modal"
-                        data-modal-toggle="default-modal">
-                        {{ $roomsTesting[0]['name'] }}
+        @if(isset($roomsTesting[0]['address']))
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">{{ $roomsTesting[0]['address'] }}</h2>
+            <div class="bg-white rounded-3xl shadow-lg p-8">
+                <div class="grid grid-cols-6 gap-4">
+                    @if(isset($roomsTesting[0]))
+                    <div class="room-card relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                         style="background-image: url('{{ $roomsTesting[0]['image'] }}'); background-size: cover; background-position: center;"
+                         data-id="{{ $roomsTesting[0]['id'] }}"
+                         data-name="{{ $roomsTesting[0]['name'] }}">
+                        <div class="room-overlay absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white font-bold">{{ $roomsTesting[0]['name'] }}</span>
+                        </div>
+                        <div class="absolute bottom-2 left-2 right-2">
+                            <span class="bg-black/70 text-white text-xs px-2 py-1 rounded block text-center">
+                                {{ $roomsTesting[0]['name'] }}
+                            </span>
+                        </div>
                     </div>
-                @endif
-
-                <div
-                    class="w-full h-full bg-green-500 border border-black room col-start-2 col-end-6 row-span-2 flex items-center justify-center">
-                    Field
+                    @endif
+                    <div class="col-span-4 aspect-square rounded-xl bg-green-100 flex items-center justify-center">
+                        <span class="text-green-600 font-medium">Taman</span>
+                    </div>
+                    <div class="col-span-1"></div>
+                    <div class="col-span-4 aspect-square rounded-xl bg-blue-100 flex items-center justify-center">
+                        <span class="text-blue-600 font-medium">Parkiran</span>
+                    </div>
                 </div>
-                <div
-                    class="w-full h-12 bg-blue-500 border border-black col-span-6 room flex items-center justify-center">
-                    Parking Lot
-                </div>
-            @endif
+            </div>
         </div>
+        @endif
+    </main>
 
+    {{-- Modal --}}
+    <div id="room-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform transition-all scale-100">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <div class="text-center">
+                    <h3 id="modal-room-name" class="text-2xl font-bold text-gray-800 mb-2">Nama Kamar</h3>
+                    <p class="text-gray-500 mb-6">Pilih aksi yang ingin dilakukan</p>
+                    <div class="space-y-3">
+                        <a id="modal-detail-btn" href="#" class="block w-full bg-lime-500 hover:bg-lime-600 text-white font-semibold py-3 rounded-xl transition-colors">
+                            Lihat Detail
+                        </a>
+                        <a id="modal-vr-btn" href="#" class="block w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 rounded-xl transition-colors">
+                            Lihat Virtual Tour
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-@endif
+</div>
+
+<x-footer />
 
 <script>
-    async function getVr(id) {
-        const data = await fetch('/room/vr/' + id, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json"
-            }
-        })
+    const modal = document.getElementById('room-modal');
+    const modalRoomName = document.getElementById('modal-room-name');
+    const modalDetailBtn = document.getElementById('modal-detail-btn');
+    const modalVrBtn = document.getElementById('modal-vr-btn');
 
-        return await data.json();
-    }
-    const modalContent = document.getElementById('modalContent')
-    const modalButton = document.getElementById('modalButton')
-    const modalTitle = document.getElementById('modalTitle')
-
-    document.querySelectorAll('[data-id]').forEach(button => {
-        button.addEventListener('click', async () => {
-            const roomId = button.getAttribute('data-id');
-            modalTitle.textContent = `Pilih aksi`;
-            modalContent.innerHTML = `
-            <div class="flex justify-center gap-4"> <!-- Center the buttons -->
-                <a href="/room/${roomId}" type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Detail Room
-                </a>
-                <a href="/room/vr/${roomId}" type="button"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Lihat VR
-                </a>
-            </div>
-        `;
+    document.querySelectorAll('[data-id]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const roomId = btn.getAttribute('data-id');
+            const roomName = btn.getAttribute('data-name') || 'Kamar ' + roomId;
+            
+            modalRoomName.textContent = roomName;
+            modalDetailBtn.href = '/room/' + roomId;
+            modalVrBtn.href = '/room/vr/' + roomId;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         });
     });
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
 </script>
-<x-footer />

@@ -25,10 +25,6 @@ class RegisteredUserController extends Controller
         $ktpUrl = null;
 
         try {
-            if ($request->hasFile('ktp')) {
-                $file = $request->file('ktp');
-                $ktpUrl = StoreImages::StoreImages($file, 'KTP');
-            }
 
             User::create([
                 'name' => $request->name,
@@ -36,7 +32,7 @@ class RegisteredUserController extends Controller
                 'role_id' => Role::getIdByRole('PENYEWA'),
                 'contact' => $request->contact,
                 'address' => $request->address,
-                'ktp_url' => $ktpUrl,
+                'ktp_url' => null,
                 'password' => Hash::make($request->password),
             ]);
 
